@@ -1,0 +1,1262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Farmer Testimonials Database — Agricultural Technology Evidence Base</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: system-ui, sans-serif; background: #F4F6F8; }
+    #root { min-height: 100vh; }
+    .loading-screen {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      min-height: 100vh; background: #002244; color: white; font-family: Georgia, serif;
+    }
+    .loading-screen h1 { font-size: 24px; margin-bottom: 8px; }
+    .loading-screen p { font-size: 14px; opacity: 0.5; margin-bottom: 24px; }
+    .loading-bar { width: 200px; height: 3px; background: rgba(255,255,255,0.15); border-radius: 2px; overflow: hidden; }
+    .loading-bar-inner { width: 40%; height: 100%; background: #0071BC; border-radius: 2px; animation: slide 1.2s ease-in-out infinite alternate; }
+    @keyframes slide { from { transform: translateX(0); } to { transform: translateX(150%); } }
+  </style>
+</head>
+<body>
+  <div id="root">
+    <div class="loading-screen">
+      <h1>Farmer Testimonials Database</h1>
+      <p>Loading application...</p>
+      <div class="loading-bar"><div class="loading-bar-inner"></div></div>
+    </div>
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+  <script type="text/babel" data-type="module">
+    const { useState, useMemo, useCallback, useRef, useEffect } = React;
+
+/* ══════════════════════════════════════════════════════════════════════
+   FARMER TESTIMONIALS DATA EXPLORER
+   
+   HOW TO ADD MORE VIDEOS:
+   ───────────────────────
+   1. Copy any existing entry below
+   2. Change the id to the next number
+   3. Fill in the fields (co, t, d, cn, r, th, ft, fn, cr, u, la)
+   4. The 'u' field MUST be a direct YouTube link: https://www.youtube.com/watch?v=XXXXX
+   5. For 'la' (latitude/longitude), use approximate country center:
+      Kenya=[0.5,37.5] Ghana=[7.5,-1.5] Nigeria=[9,7.5] Uganda=[1,32]
+      India=[22,78] Brazil=[-10,-52] Colombia=[4,-74] Bangladesh=[24,90]
+      Tanzania=[-6,35] Rwanda=[-2,29.5] Ethiopia=[9,39] South Africa=[-29,25]
+      Côte d'Ivoire=[7.5,-5.5] Senegal=[14.5,-14.5] Mexico=[19,-99]
+   6. Save and commit — Vercel auto-deploys
+   
+   FIELD KEY:
+   id = unique number | co = company | t = title | d = description
+   cn = country | r = region (Sub-Saharan Africa / South Asia / Latin America / Cross-Regional)
+   th = theme | ft = farmer type | fn = farmer name | cr = crop/activity
+   u = YouTube URL | la = [latitude, longitude]
+   ══════════════════════════════════════════════════════════════════════ */
+
+const D = [
+  {id:1,co:'ACRE Africa',t:'ACRE Africa\'s Impact on Women Inclusion to Drive Insurance Uptake',d:'ACRE Africa\'s impact on women inclusion to drive insurance uptake among female smallholder farmers across Kenya\'s agricultural communities.',cn:'Kenya',r:'Sub-Saharan Africa',th:'Insurance & Risk Management',ft:'Smallholder',fn:'Multiple Farmers',cr:'Mixed crops',u:'https://www.youtube.com/watch?v=xR_84_28s5E',la:[0.5,37.5]},
+  {id:2,co:'AMTech',t:'Amtech Technologies: Digitization of Dairy',d:'A dairy farmer discusses inefficiencies in milk pricing and how the EesyMa software solution created digital information systems for accurate measurement and transfer.',cn:'Kenya',r:'Sub-Saharan Africa',th:'Dairy & Livestock Technology',ft:'Smallholder',fn:'Dairy Farmer',cr:'Dairy',u:'https://www.youtube.com/watch?v=HD5F2gTXqGE',la:[0.5,37.5]},
+  {id:3,co:'Apollo Agriculture',t:'Meet Jonah, An Apollo Farmer',d:'Jonah shares his family\'s farming challenges, how he discovered Apollo Agriculture, and the efficiency improvements in accessing inputs and agricultural credit.',cn:'Kenya',r:'Sub-Saharan Africa',th:'Farm Inputs & Credit',ft:'Smallholder',fn:'Jonah',cr:'Maize',u:'https://www.youtube.com/watch?v=FQAaeDqsnWI',la:[0.5,37.5]},
+  {id:4,co:'Apollo Agriculture',t:'Protus — An Apollo Agriculture Super Farmer',d:'Protus, recognized as an Apollo Agriculture Super Farmer, shares his experience with the platform\'s farming support services and yield improvements.',cn:'Kenya',r:'Sub-Saharan Africa',th:'Farm Inputs & Credit',ft:'Smallholder',fn:'Protus',cr:'Maize',u:'https://www.youtube.com/watch?v=tGJDdB18l9c',la:[0.5,37.5]},
+  {id:5,co:'Apollo Agriculture',t:'Supporting Our Agrodealer Community',d:'Julia Barasa discusses her role as an agrodealer in the Apollo Agriculture community and how the platform supports agricultural input distribution to local farmers.',cn:'Kenya',r:'Sub-Saharan Africa',th:'Farm Inputs & Credit',ft:'Agrodealer',fn:'Julia Barasa',cr:'Agricultural inputs',u:'https://www.youtube.com/watch?v=tf-knqmhC_E',la:[0.5,37.5]},
+  {id:6,co:'Apollo Agriculture',t:'Apollo Feature on Kenya\'s Gold — Maize Farming (Citizen TV)',d:'Apollo Agriculture featured on Kenya\'s Citizen TV covering maize farming innovations and their direct impact on Kenyan smallholder productivity.',cn:'Kenya',r:'Sub-Saharan Africa',th:'Farm Inputs & Credit',ft:'Smallholder',fn:'Multiple Farmers',cr:'Maize',u:'https://www.youtube.com/watch?v=yYG8x1QHn2M',la:[0.5,37.5]},
+  {id:7,co:'DigiCow',t:'Made in Kenya: DigiCow Helps Dairy Farmers Store and Access Data',d:'DigiCow helps dairy farmers store and access critical herd data, as featured on CitizenTV Kenya\'s \'Made in Kenya\' segment.',cn:'Kenya',r:'Sub-Saharan Africa',th:'Dairy & Livestock Technology',ft:'Smallholder',fn:'Multiple Farmers',cr:'Dairy',u:'https://www.youtube.com/watch?v=7SVJE5YFbsE',la:[0.5,37.5]},
+  {id:8,co:'EzyAgric',t:'Farmer in Luwero District — How EzyAgric App Changed His Farming',d:'A farmer in Luwero District describes how the EzyAgric App transformed his farming practices, from planting decisions to market timing.',cn:'Uganda',r:'Sub-Saharan Africa',th:'Digital Advisory & Extension',ft:'Smallholder',fn:'Luwero Farmer',cr:'Mixed crops',u:'https://www.youtube.com/watch?v=WsKjvNgo9Ms',la:[1,32]},
+  {id:9,co:'Farmerline',t:'Farmer Profile — Episode 1: Ben Owusu',d:'Episode 1 of the Farmerline Farmer Profile series, featuring Ben Owusu and his experience accessing market information and agricultural advisory through mobile technology.',cn:'Ghana',r:'Sub-Saharan Africa',th:'Market Access & Information',ft:'Smallholder',fn:'Ben Owusu',cr:'Cocoa',u:'https://www.youtube.com/watch?v=MKbMr6m6BeM',la:[7.5,-1.5]},
+  {id:10,co:'Farmerline',t:'Testimonial: Kwesi Mensah',d:'Kwesi Mensah shares his testimonial about working with Farmerline and the impact on his farming operations, market linkages, and income stability.',cn:'Ghana',r:'Sub-Saharan Africa',th:'Market Access & Information',ft:'Smallholder',fn:'Kwesi Mensah',cr:'Cocoa',u:'https://www.youtube.com/watch?v=NFOehSruekc',la:[7.5,-1.5]},
+  {id:11,co:'Farmerline',t:'Testimonial: Pious Ofosu',d:'Pious Ofosu discusses how Farmerline\'s platform improved his access to fair markets, pricing transparency, and timely agricultural information.',cn:'Ghana',r:'Sub-Saharan Africa',th:'Market Access & Information',ft:'Smallholder',fn:'Pious Ofosu',cr:'Cocoa',u:'https://www.youtube.com/watch?v=LNJUSqQJ8i0',la:[7.5,-1.5]},
+  {id:12,co:'Farmerline',t:'The Story of Safia Iddrisu',d:'Safia Iddrisu\'s story of how Farmerline\'s agricultural services transformed her farming livelihood and connected her to broader supply chains in Ghana.',cn:'Ghana',r:'Sub-Saharan Africa',th:'Market Access & Information',ft:'Smallholder',fn:'Safia Iddrisu',cr:'Mixed crops',u:'https://www.youtube.com/watch?v=L95lUT3jbZ4',la:[7.5,-1.5]},
+  {id:13,co:'Farmerline',t:'From Zero to Sheroe — Salima Zachari\'s Story',d:'Salima Zachari\'s empowering journey from subsistence challenges to commercial success through Farmerline\'s support network and digital tools.',cn:'Ghana',r:'Sub-Saharan Africa',th:'Market Access & Information',ft:'Smallholder',fn:'Salima Zachari',cr:'Mixed crops',u:'https://www.youtube.com/watch?v=2jY0N2S6Yfs',la:[7.5,-1.5]},
+  {id:14,co:'Farmerline',t:'Testimonial: Gnessois Kpakpo Johassien',d:'Gnessois Kpakpo Johassien shares their experience with Farmerline\'s cocoa farmer services in Côte d\'Ivoire, including traceability and premium access.',cn:'Côte d\'Ivoire',r:'Sub-Saharan Africa',th:'Market Access & Information',ft:'Smallholder',fn:'Gnessois Kpakpo Johassien',cr:'Cocoa',u:'https://www.youtube.com/watch?v=rr4l87JS0C0',la:[7.5,-5.5]},
+  {id:15,co:'Hello Tractor',t:'Hello Tractor Featured on CNN\'s Inside Africa',d:'Hello Tractor\'s tractor-sharing platform featured on CNN\'s Inside Africa, showcasing how \'Uber for tractors\' is democratizing access to farm machinery across Nigeria.',cn:'Nigeria',r:'Sub-Saharan Africa',th:'Mechanization & Equipment',ft:'Smallholder',fn:'Multiple Farmers',cr:'Mixed crops',u:'https://www.youtube.com/watch?v=tbXvwF98pTI',la:[9,7.5]},
+  {id:16,co:'SunCulture',t:'Farming with Freedom: Solar & Drip Irrigation — Ralph Gates Farm',d:'How solar-powered drip irrigation through SunCulture empowered Ralph Gates\' farm operations and water management.',cn:'Kenya',r:'Sub-Saharan Africa',th:'Solar & Irrigation Technology',ft:'Smallholder',fn:'Ralph Gates',cr:'Mixed crops',u:'https://www.youtube.com/watch?v=HtZ9586B3FM',la:[0.5,37.5]},
+  {id:17,co:'SunCulture',t:'It Makes Farming Easy — Alice\'s Story of Solving Water Challenges',d:'Alice shares her experience with SunCulture\'s solar irrigation solutions and the year-round production it enabled on her small farm.',cn:'Kenya',r:'Sub-Saharan Africa',th:'Solar & Irrigation Technology',ft:'Smallholder',fn:'Alice',cr:'Mixed crops',u:'https://www.youtube.com/watch?v=E_Fsw6tumGo',la:[0.5,37.5]},
+  /* ──── ADD NEW ENTRIES ABOVE THIS LINE ──── */
+];
+
+
+const THEMES = ["AI & Precision Agriculture","Dairy & Livestock Technology","Digital Advisory & Extension","Farm Inputs & Credit","Insurance & Risk Management","Market Access & Information","Mechanization & Equipment","Solar & Irrigation Technology"];
+
+const REGIONS = ["Sub-Saharan Africa","South Asia","Latin America","Cross-Regional"];
+
+const REGION_COLORS = {
+  "Sub-Saharan Africa": "#1B7340",
+  "South Asia": "#1D4E89",
+  "Latin America": "#B8860B",
+  "Cross-Regional": "#6B5B73",
+};
+
+const THEME_ICONS = {
+  "AI & Precision Agriculture": "◈",
+  "Dairy & Livestock Technology": "◎",
+  "Digital Advisory & Extension": "◇",
+  "Farm Inputs & Credit": "▣",
+  "Insurance & Risk Management": "△",
+  "Market Access & Information": "▤",
+  "Mechanization & Equipment": "⬡",
+  "Solar & Irrigation Technology": "☀",
+};
+
+const SORT_FIELDS = [
+  { key: 'co', label: 'Company' },
+  { key: 'cn', label: 'Country' },
+  { key: 'th', label: 'Theme' },
+  { key: 'r', label: 'Region' },
+  { key: 'ft', label: 'Farmer Type' },
+  { key: 'st', label: 'Status' },
+];
+
+const PER_PAGE_OPTIONS = [15, 25, 50, 100];
+
+/* ─── ISO 3166-1 NUMERIC → COUNTRY NAME (for TopoJSON/Natural Earth) ─── */
+const ISO_NAMES = {
+  '004':'Afghanistan','008':'Albania','012':'Algeria','024':'Angola','032':'Argentina',
+  '036':'Australia','040':'Austria','044':'Bahamas','050':'Bangladesh','051':'Armenia',
+  '056':'Belgium','064':'Bhutan','068':'Bolivia','070':'Bosnia and Herz.','072':'Botswana',
+  '076':'Brazil','100':'Bulgaria','104':'Myanmar','108':'Burundi','112':'Belarus',
+  '116':'Cambodia','120':'Cameroon','124':'Canada','140':'Central African Rep.','144':'Sri Lanka',
+  '148':'Chad','152':'Chile','156':'China','170':'Colombia','178':'Congo',
+  '180':'Dem. Rep. Congo','188':'Costa Rica','191':'Croatia','192':'Cuba','196':'Cyprus',
+  '203':'Czechia','204':'Benin','208':'Denmark','214':'Dominican Rep.','218':'Ecuador',
+  '222':'El Salvador','226':'Eq. Guinea','231':'Ethiopia','232':'Eritrea','246':'Finland',
+  '250':'France','262':'Djibouti','266':'Gabon','268':'Georgia','270':'Gambia',
+  '275':'Palestine','276':'Germany','288':'Ghana','300':'Greece','320':'Guatemala',
+  '324':'Guinea','328':'Guyana','332':'Haiti','340':'Honduras','348':'Hungary',
+  '356':'India','360':'Indonesia','364':'Iran','368':'Iraq','372':'Ireland',
+  '376':'Israel','380':'Italy','384':"Côte d'Ivoire",'388':'Jamaica','392':'Japan',
+  '398':'Kazakhstan','400':'Jordan','404':'Kenya','408':'North Korea','410':'South Korea',
+  '414':'Kuwait','417':'Kyrgyzstan','418':'Laos','422':'Lebanon','426':'Lesotho',
+  '430':'Liberia','434':'Libya','440':'Lithuania','442':'Luxembourg','450':'Madagascar',
+  '454':'Malawi','458':'Malaysia','466':'Mali','478':'Mauritania','484':'Mexico',
+  '496':'Mongolia','498':'Moldova','504':'Morocco','508':'Mozambique','512':'Oman',
+  '516':'Namibia','520':'Nauru','524':'Nepal','528':'Netherlands','540':'New Caledonia',
+  '554':'New Zealand','558':'Nicaragua','562':'Niger','566':'Nigeria','578':'Norway',
+  '586':'Pakistan','591':'Panama','598':'Papua New Guinea','600':'Paraguay','604':'Peru',
+  '608':'Philippines','616':'Poland','620':'Portugal','630':'Puerto Rico','634':'Qatar',
+  '642':'Romania','643':'Russia','646':'Rwanda','682':'Saudi Arabia','686':'Senegal',
+  '694':'Sierra Leone','702':'Singapore','703':'Slovakia','704':'Vietnam','705':'Slovenia',
+  '706':'Somalia','710':'South Africa','716':'Zimbabwe','724':'Spain','728':'South Sudan',
+  '729':'Sudan','740':'Suriname','748':'Eswatini','752':'Sweden','756':'Switzerland',
+  '760':'Syria','762':'Tajikistan','764':'Thailand','768':'Togo','780':'Trinidad and Tobago',
+  '788':'Tunisia','792':'Turkey','800':'Uganda','804':'Ukraine','818':'Egypt',
+  '826':'United Kingdom','834':'Tanzania','840':'United States','854':'Burkina Faso',
+  '858':'Uruguay','860':'Uzbekistan','862':'Venezuela','887':'Yemen','894':'Zambia',
+  '706':'Somalia','-99':'N. Cyprus','010':'Antarctica',
+};
+
+/* Map our DB country names → region for coloring on map */
+const DB_COUNTRY_REGION = {};
+D.forEach(d => {
+  const cn = d.cn;
+  // Skip multi-country entries for map coloring
+  if (!cn.includes('/') && !cn.includes('Multiple') && !cn.includes('Pan-')) {
+    if (!DB_COUNTRY_REGION[cn]) DB_COUNTRY_REGION[cn] = d.r;
+  }
+});
+
+/* ─── STYLES ─── */
+const S = {
+  fontBase: "'Libre Franklin', 'Source Sans Pro', system-ui, sans-serif",
+  fontSerif: "'Libre Baskerville', 'Georgia', 'Times New Roman', serif",
+  navy: "#002244",
+  navyLight: "#003366",
+  bg: "#F4F6F8",
+  cardBg: "#FFFFFF",
+  border: "#D4DAE0",
+  borderLight: "#E8ECF0",
+  textPrimary: "#1A202C",
+  textSecondary: "#5A6577",
+  textMuted: "#8896A7",
+  accent: "#0071BC",
+  accentHover: "#005A96",
+  success: "#1B7340",
+  warning: "#D4A017",
+};
+
+/* ─── DROPDOWN FILTER ─── */
+function FilterDropdown({ label, options, value, onChange, counts, colorMap }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef(null);
+
+  useEffect(() => {
+    const handler = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
+  return (
+    <div ref={ref} style={{ position: "relative" }}>
+      <button
+        onClick={() => setOpen(!open)}
+        style={{
+          display: "flex", alignItems: "center", gap: 6,
+          padding: "7px 12px", fontSize: 12.5, fontFamily: S.fontBase,
+          background: value ? S.accent + "0D" : S.cardBg,
+          border: `1px solid ${value ? S.accent + "55" : S.border}`,
+          borderRadius: 4, cursor: "pointer", color: value ? S.accent : S.textPrimary,
+          fontWeight: value ? 600 : 400, whiteSpace: "nowrap",
+          transition: "all 0.15s ease",
+        }}
+      >
+        <span style={{ color: S.textMuted, fontSize: 11, fontWeight: 400 }}>{label}:</span>
+        <span>{value || "All"}</span>
+        <span style={{ fontSize: 9, opacity: 0.5, marginLeft: 2 }}>{open ? "▲" : "▼"}</span>
+      </button>
+
+      {open && (
+        <div style={{
+          position: "absolute", top: "100%", left: 0, marginTop: 4,
+          background: S.cardBg, border: `1px solid ${S.border}`,
+          borderRadius: 4, boxShadow: "0 6px 20px rgba(0,0,0,0.12)",
+          zIndex: 100, minWidth: 220, maxHeight: 320, overflowY: "auto",
+          padding: "4px 0",
+        }}>
+          <button
+            onClick={() => { onChange(null); setOpen(false); }}
+            style={{
+              display: "flex", justifyContent: "space-between", width: "100%",
+              padding: "8px 14px", fontSize: 12, background: !value ? "#F0F4F8" : "transparent",
+              border: "none", cursor: "pointer", fontFamily: S.fontBase,
+              color: S.textPrimary, fontWeight: !value ? 600 : 400,
+              textAlign: "left",
+            }}
+          >
+            <span>All {label}s</span>
+          </button>
+          {options.map(opt => {
+            const count = counts?.[opt] || 0;
+            const color = colorMap?.[opt];
+            return (
+              <button
+                key={opt}
+                onClick={() => { onChange(opt); setOpen(false); }}
+                style={{
+                  display: "flex", justifyContent: "space-between", alignItems: "center",
+                  width: "100%", padding: "7px 14px", fontSize: 12,
+                  background: value === opt ? "#F0F4F8" : "transparent",
+                  border: "none", cursor: "pointer", fontFamily: S.fontBase,
+                  color: S.textPrimary, fontWeight: value === opt ? 600 : 400,
+                  textAlign: "left", gap: 8,
+                }}
+              >
+                <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                  {color && <span style={{ width: 8, height: 8, borderRadius: 2, background: color, flexShrink: 0 }} />}
+                  <span style={{ lineHeight: 1.3 }}>{opt}</span>
+                </span>
+                <span style={{
+                  fontSize: 10, color: S.textMuted, background: "#F0F2F5",
+                  padding: "1px 6px", borderRadius: 8, flexShrink: 0,
+                }}>{count}</span>
+              </button>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ─── SUMMARY STATS BANNER (UNDP HDI Tracker style) ─── */
+function StatsBanner({ data }) {
+  const stats = useMemo(() => {
+    const countries = new Set(data.map(d => d.cn));
+    const companies = new Set(data.map(d => d.co));
+    const verified = data.filter(d => d.st === "Verified").length;
+    return { total: data.length, countries: countries.size, companies: companies.size, verified };
+  }, [data]);
+
+  const items = [
+    { label: "Total Entries", value: stats.total, icon: "◫" },
+    { label: "Countries / Areas", value: stats.countries, icon: "◈" },
+    { label: "Companies", value: stats.companies, icon: "▣" },
+    { label: "Verified", value: stats.verified, suffix: `/ ${stats.total}`, icon: "✓" },
+  ];
+
+  return (
+    <div style={{
+      display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 1,
+      background: S.navy, borderRadius: 4, overflow: "hidden",
+      boxShadow: "0 2px 8px rgba(0,34,68,0.15)",
+    }}>
+      {items.map((item, idx) => (
+        <div key={idx} style={{
+          padding: "16px 18px", background: idx === 0 ? S.navy : S.navyLight,
+          display: "flex", flexDirection: "column", gap: 4,
+        }}>
+          <div style={{
+            fontSize: 10.5, color: "rgba(255,255,255,0.55)", fontFamily: S.fontBase,
+            letterSpacing: 0.8, textTransform: "uppercase", fontWeight: 500,
+          }}>
+            {item.label}
+          </div>
+          <div style={{ display: "flex", alignItems: "baseline", gap: 5 }}>
+            <span style={{
+              fontSize: 26, fontWeight: 700, color: "white",
+              fontFamily: S.fontSerif, lineHeight: 1,
+            }}>{item.value}</span>
+            {item.suffix && (
+              <span style={{ fontSize: 13, color: "rgba(255,255,255,0.45)", fontFamily: S.fontBase }}>
+                {item.suffix}
+              </span>
+            )}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/* ─── COVERAGE BARS (IMF Data Mapper heat strip style) ─── */
+function CoverageBars({ data, filterRegion, onRegionClick }) {
+  const regionCounts = useMemo(() => {
+    const counts = {};
+    REGIONS.forEach(r => { counts[r] = data.filter(d => d.r === r).length; });
+    return counts;
+  }, [data]);
+
+  const themeCounts = useMemo(() => {
+    const counts = {};
+    THEMES.forEach(t => { counts[t] = data.filter(d => d.th === t).length; });
+    return counts;
+  }, [data]);
+
+  const maxRegion = Math.max(...Object.values(regionCounts));
+  const maxTheme = Math.max(...Object.values(themeCounts));
+
+  return (
+    <div style={{
+      display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20,
+      background: S.cardBg, border: `1px solid ${S.border}`, borderRadius: 4,
+      padding: "18px 22px",
+    }}>
+      {/* Region bars */}
+      <div>
+        <div style={{
+          fontSize: 10.5, fontWeight: 600, color: S.textMuted, fontFamily: S.fontBase,
+          textTransform: "uppercase", letterSpacing: 0.8, marginBottom: 12,
+        }}>
+          Coverage by Region
+        </div>
+        {REGIONS.map(region => {
+          const count = regionCounts[region];
+          const pct = maxRegion > 0 ? (count / maxRegion) * 100 : 0;
+          const isActive = filterRegion === region;
+          return (
+            <div key={region}
+              onClick={() => onRegionClick(isActive ? null : region)}
+              style={{
+                display: "grid", gridTemplateColumns: "130px 1fr 32px",
+                alignItems: "center", gap: 10, marginBottom: 6, cursor: "pointer",
+                padding: "3px 0", borderRadius: 3,
+                background: isActive ? REGION_COLORS[region] + "08" : "transparent",
+              }}
+            >
+              <div style={{
+                display: "flex", alignItems: "center", gap: 6,
+              }}>
+                <span style={{
+                  width: 8, height: 8, borderRadius: 2,
+                  background: REGION_COLORS[region],
+                  opacity: isActive ? 1 : 0.7,
+                }} />
+                <span style={{
+                  fontSize: 11.5, color: isActive ? REGION_COLORS[region] : S.textSecondary,
+                  fontFamily: S.fontBase, fontWeight: isActive ? 600 : 400,
+                }}>{region}</span>
+              </div>
+              <div style={{
+                height: 10, background: "#EDF0F4", borderRadius: 2, overflow: "hidden",
+              }}>
+                <div style={{
+                  height: "100%", width: `${pct}%`,
+                  background: REGION_COLORS[region],
+                  opacity: isActive ? 1 : 0.6,
+                  borderRadius: 2, transition: "all 0.3s ease",
+                }} />
+              </div>
+              <span style={{
+                fontSize: 11, fontWeight: 600, color: isActive ? REGION_COLORS[region] : S.textSecondary,
+                fontFamily: S.fontBase, textAlign: "right",
+              }}>{count}</span>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Theme bars */}
+      <div>
+        <div style={{
+          fontSize: 10.5, fontWeight: 600, color: S.textMuted, fontFamily: S.fontBase,
+          textTransform: "uppercase", letterSpacing: 0.8, marginBottom: 12,
+        }}>
+          Coverage by Theme
+        </div>
+        {THEMES.map(theme => {
+          const count = themeCounts[theme];
+          const pct = maxTheme > 0 ? (count / maxTheme) * 100 : 0;
+          return (
+            <div key={theme} style={{
+              display: "grid", gridTemplateColumns: "160px 1fr 32px",
+              alignItems: "center", gap: 10, marginBottom: 6,
+            }}>
+              <div style={{
+                fontSize: 11, color: S.textSecondary, fontFamily: S.fontBase,
+                whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis",
+              }}>
+                <span style={{ marginRight: 4 }}>{THEME_ICONS[theme]}</span>
+                {theme}
+              </div>
+              <div style={{ height: 10, background: "#EDF0F4", borderRadius: 2, overflow: "hidden" }}>
+                <div style={{
+                  height: "100%", width: `${pct}%`,
+                  background: S.accent, opacity: 0.55,
+                  borderRadius: 2, transition: "all 0.3s ease",
+                }} />
+              </div>
+              <span style={{ fontSize: 11, fontWeight: 500, color: S.textSecondary, fontFamily: S.fontBase, textAlign: "right" }}>
+                {count}
+              </span>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+/* ─── WORLD MAP (D3 + TopoJSON — Natural Earth political boundaries) ─── */
+function WorldMap({ data, filterCountry, onCountryClick }) {
+  const svgRef = useRef(null);
+  const tooltipRef = useRef(null);
+  const [worldGeo, setWorldGeo] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [hovered, setHovered] = useState(null);
+  const [mousePos, setMousePos] = useState([0, 0]);
+
+  /* Count entries per DB country name */
+  const dbCountryCounts = useMemo(() => {
+    const counts = {};
+    D.forEach(d => {
+      const cn = d.cn;
+      if (!cn.includes('/') && !cn.includes('Multiple') && !cn.includes('Pan-')) {
+        counts[cn] = (counts[cn] || 0) + 1;
+      }
+    });
+    return counts;
+  }, []);
+
+  /* Build reverse map: ISO name → DB country name (handle naming differences) */
+  const isoToDbName = useMemo(() => {
+    const map = {};
+    Object.values(ISO_NAMES).forEach(isoName => {
+      // Direct match
+      if (dbCountryCounts[isoName]) { map[isoName] = isoName; return; }
+      // Handle known mismatches
+      const aliases = {
+        'United Republic of Tanzania': 'Tanzania',
+        'Republic of Korea': 'South Korea',
+      };
+      if (aliases[isoName] && dbCountryCounts[aliases[isoName]]) {
+        map[isoName] = aliases[isoName];
+      }
+    });
+    // Also map from our DB names
+    Object.keys(dbCountryCounts).forEach(dbName => { map[dbName] = dbName; });
+    return map;
+  }, [dbCountryCounts]);
+
+  /* Load TopoJSON on mount */
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadMap() {
+      try {
+        // Load topojson-client from CDN
+        if (!window.topojson) {
+          await new Promise((resolve, reject) => {
+            const s = document.createElement('script');
+            s.src = 'https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js';
+            s.onload = resolve;
+            s.onerror = reject;
+            document.head.appendChild(s);
+          });
+        }
+
+        // Fetch Natural Earth 110m countries (same source as WB/UN maps)
+        const resp = await fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json');
+        const topology = await resp.json();
+        const geo = window.topojson.feature(topology, topology.objects.countries);
+
+        // Attach country names from ISO lookup
+        geo.features.forEach(f => {
+          f.properties.name = ISO_NAMES[f.id] || ISO_NAMES[String(f.id)] || `ID:${f.id}`;
+        });
+
+        if (!cancelled) { setWorldGeo(geo); setLoading(false); }
+      } catch (err) {
+        console.error('Map load error:', err);
+        if (!cancelled) setLoading(false);
+      }
+    }
+
+    loadMap();
+    return () => { cancelled = true; };
+  }, []);
+
+  /* D3 projection — Natural Earth (same as UN/WB publications) */
+  const W = 960, H = 500;
+  const projection = useMemo(() =>
+    d3.geoNaturalEarth1()
+      .scale(155)
+      .translate([W / 2, H / 2 + 20])
+  , []);
+  const pathGen = useMemo(() => d3.geoPath().projection(projection), [projection]);
+
+  /* Graticule for grid lines */
+  const graticule = useMemo(() => d3.geoGraticule10(), []);
+
+  /* Globe outline */
+  const outline = useMemo(() => ({ type: "Sphere" }), []);
+
+  /* Get fill color for a country feature */
+  const getCountryFill = useCallback((feature) => {
+    const name = feature.properties.name;
+    const dbName = isoToDbName[name];
+    if (dbName && dbCountryCounts[dbName]) {
+      const region = DB_COUNTRY_REGION[dbName];
+      const color = REGION_COLORS[region];
+      if (color) return { fill: color, opacity: 0.55, inDb: true, dbName, count: dbCountryCounts[dbName], region };
+    }
+    return { fill: '#D4DAE0', opacity: 1, inDb: false, dbName: null, count: 0, region: null };
+  }, [isoToDbName, dbCountryCounts]);
+
+  const handleMouseMove = useCallback((e) => {
+    const rect = svgRef.current?.getBoundingClientRect();
+    if (rect) setMousePos([e.clientX - rect.left, e.clientY - rect.top]);
+  }, []);
+
+  if (loading) {
+    return (
+      <div style={{
+        background: S.cardBg, borderRadius: 4, border: `1px solid ${S.border}`,
+        padding: "60px 20px", textAlign: "center",
+      }}>
+        <div style={{ fontSize: 13, color: S.textMuted, fontFamily: S.fontBase }}>
+          Loading political boundaries from Natural Earth...
+        </div>
+        <div style={{
+          width: 120, height: 3, background: S.borderLight, borderRadius: 2,
+          margin: "12px auto", overflow: "hidden",
+        }}>
+          <div style={{
+            width: "40%", height: "100%", background: S.accent, borderRadius: 2,
+            animation: "loadSlide 1.2s ease-in-out infinite alternate",
+          }} />
+        </div>
+        <style>{`@keyframes loadSlide { from { transform: translateX(0); } to { transform: translateX(150%); } }`}</style>
+      </div>
+    );
+  }
+
+  if (!worldGeo) {
+    return (
+      <div style={{
+        background: S.cardBg, borderRadius: 4, border: `1px solid ${S.border}`,
+        padding: "40px 20px", textAlign: "center", fontSize: 13, color: S.textMuted,
+      }}>
+        Map data could not be loaded. Filters and data table still work below.
+      </div>
+    );
+  }
+
+  return (
+    <div style={{
+      background: S.cardBg, borderRadius: 4, border: `1px solid ${S.border}`,
+      overflow: "hidden", position: "relative",
+    }}>
+      <svg
+        ref={svgRef}
+        viewBox={`0 0 ${W} ${H}`}
+        style={{ width: "100%", display: "block", background: "#F7F9FB" }}
+        onMouseMove={handleMouseMove}
+        onMouseLeave={() => setHovered(null)}
+      >
+        {/* Grid lines (graticule) */}
+        <path d={pathGen(graticule)} fill="none" stroke="#E2E6EB" strokeWidth="0.3" />
+
+        {/* Globe outline */}
+        <path d={pathGen(outline)} fill="none" stroke="#C8CED6" strokeWidth="0.8" />
+
+        {/* Country polygons */}
+        {worldGeo.features.map((feature, idx) => {
+          const info = getCountryFill(feature);
+          const isHovered = hovered === idx;
+          const isSelected = filterCountry && info.dbName === filterCountry;
+          const pathD = pathGen(feature);
+          if (!pathD) return null;
+
+          return (
+            <path
+              key={idx}
+              d={pathD}
+              fill={isSelected ? (REGION_COLORS[info.region] || S.accent) : isHovered && info.inDb ? (REGION_COLORS[info.region] || S.accent) : info.fill}
+              fillOpacity={isSelected ? 0.85 : isHovered ? (info.inDb ? 0.75 : 0.6) : info.inDb ? info.opacity : 1}
+              stroke={isSelected ? "#002244" : isHovered ? "#666" : info.inDb ? "#FFFFFF" : "#BCC3CC"}
+              strokeWidth={isSelected ? 1.5 : isHovered ? 0.8 : info.inDb ? 0.7 : 0.3}
+              style={{ cursor: info.inDb ? "pointer" : "default", transition: "fill-opacity 0.15s, stroke-width 0.15s" }}
+              onMouseEnter={() => setHovered(idx)}
+              onMouseLeave={() => setHovered(null)}
+              onClick={() => {
+                if (info.inDb && info.dbName) {
+                  onCountryClick(filterCountry === info.dbName ? null : info.dbName);
+                }
+              }}
+            />
+          );
+        })}
+
+        {/* Country name labels for DB countries with high counts */}
+        {worldGeo.features.map((feature, idx) => {
+          const info = getCountryFill(feature);
+          if (!info.inDb || info.count < 3) return null;
+          const centroid = pathGen.centroid(feature);
+          if (!centroid || isNaN(centroid[0])) return null;
+          return (
+            <text
+              key={`label-${idx}`}
+              x={centroid[0]} y={centroid[1] - 8}
+              textAnchor="middle" fontSize="8" fontWeight="600"
+              fill="#1A202C" style={{ fontFamily: S.fontBase, pointerEvents: "none" }}
+              stroke="white" strokeWidth="2.5" paintOrder="stroke"
+            >
+              {info.dbName}
+            </text>
+          );
+        })}
+
+        {/* Legend */}
+        <g transform={`translate(20, ${H - 55})`}>
+          <rect x={-6} y={-10} width={260} height={52} rx={3} fill="white" fillOpacity="0.88" stroke={S.border} strokeWidth="0.5" />
+          <text x={0} y={2} fontSize="8" fontWeight="600" fill={S.textMuted}
+            style={{ fontFamily: S.fontBase, textTransform: "uppercase", letterSpacing: "0.6px" }}>
+            Database Coverage
+          </text>
+          {REGIONS.filter(r => r !== "Cross-Regional").map((region, i) => (
+            <g key={region} transform={`translate(${i * 85}, 18)`}>
+              <rect x={0} y={0} width={10} height={10} rx={2} fill={REGION_COLORS[region]} fillOpacity={0.55} stroke={REGION_COLORS[region]} strokeWidth="0.5" />
+              <text x={14} y={9} fontSize="7.5" fill="#374151" style={{ fontFamily: S.fontBase }}>
+                {region.replace("Sub-Saharan ", "SS ")}
+              </text>
+            </g>
+          ))}
+          <g transform={`translate(0, 32)`}>
+            <rect x={0} y={0} width={10} height={10} rx={2} fill="#D4DAE0" stroke="#BCC3CC" strokeWidth="0.5" />
+            <text x={14} y={9} fontSize="7.5" fill="#8896A7" style={{ fontFamily: S.fontBase }}>
+              No entries in database
+            </text>
+          </g>
+        </g>
+      </svg>
+
+      {/* Tooltip */}
+      {hovered !== null && worldGeo.features[hovered] && (
+        <div style={{
+          position: "absolute",
+          left: Math.min(mousePos[0] + 12, (svgRef.current?.clientWidth || 800) - 200),
+          top: mousePos[1] - 10,
+          background: "rgba(0,22,44,0.92)", color: "white",
+          padding: "8px 12px", borderRadius: 4, fontSize: 12,
+          fontFamily: S.fontBase, pointerEvents: "none",
+          boxShadow: "0 4px 12px rgba(0,0,0,0.2)",
+          zIndex: 10, whiteSpace: "nowrap",
+          transform: "translateY(-100%)",
+        }}>
+          {(() => {
+            const info = getCountryFill(worldGeo.features[hovered]);
+            const name = worldGeo.features[hovered].properties.name;
+            return (
+              <>
+                <div style={{ fontWeight: 600, marginBottom: info.inDb ? 3 : 0 }}>
+                  {info.inDb && <span style={{ width: 7, height: 7, borderRadius: 2, background: REGION_COLORS[info.region], display: "inline-block", marginRight: 6 }} />}
+                  {name}
+                </div>
+                {info.inDb && (
+                  <div style={{ fontSize: 11, opacity: 0.7 }}>
+                    {info.count} testimonial{info.count !== 1 ? 's' : ''} · {info.region} · Click to filter
+                  </div>
+                )}
+              </>
+            );
+          })()}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ─── SORTABLE DATA TABLE (WB DataBank style) ─── */
+function DataTable({ data, onRowClick }) {
+  const [sortKey, setSortKey] = useState('co');
+  const [sortDir, setSortDir] = useState('asc');
+  const [page, setPage] = useState(0);
+  const [perPage, setPerPage] = useState(25);
+
+  const sorted = useMemo(() => {
+    return [...data].sort((a, b) => {
+      const va = (a[sortKey] || '').toLowerCase();
+      const vb = (b[sortKey] || '').toLowerCase();
+      return sortDir === 'asc' ? va.localeCompare(vb) : vb.localeCompare(va);
+    });
+  }, [data, sortKey, sortDir]);
+
+  const totalPages = Math.ceil(sorted.length / perPage);
+  const pageData = sorted.slice(page * perPage, (page + 1) * perPage);
+
+  useEffect(() => { setPage(0); }, [data, perPage]);
+
+  const handleSort = (key) => {
+    if (sortKey === key) setSortDir(d => d === 'asc' ? 'desc' : 'asc');
+    else { setSortKey(key); setSortDir('asc'); }
+  };
+
+  const columns = [
+    { key: 'co', label: 'Company', width: '15%' },
+    { key: 't', label: 'Title', width: '22%' },
+    { key: 'cn', label: 'Country', width: '11%' },
+    { key: 'r', label: 'Region', width: '12%' },
+    { key: 'th', label: 'Theme', width: '16%' },
+    { key: 'ft', label: 'Farmer Type', width: '10%' },
+    { key: 'cr', label: 'Crop / Activity', width: '10%' },
+    { key: 'st', label: 'Status', width: '6%' },
+  ];
+
+  const SortArrow = ({ col }) => {
+    if (sortKey !== col) return <span style={{ opacity: 0.3, fontSize: 8 }}> ↕</span>;
+    return <span style={{ fontSize: 8, color: S.accent }}> {sortDir === 'asc' ? '▲' : '▼'}</span>;
+  };
+
+  return (
+    <div style={{
+      background: S.cardBg, border: `1px solid ${S.border}`, borderRadius: 4,
+      overflow: "hidden",
+    }}>
+      {/* Table header bar */}
+      <div style={{
+        display: "flex", justifyContent: "space-between", alignItems: "center",
+        padding: "10px 16px", borderBottom: `1px solid ${S.borderLight}`,
+        background: "#FAFBFC",
+      }}>
+        <div style={{ fontSize: 11.5, color: S.textSecondary, fontFamily: S.fontBase }}>
+          Showing <strong style={{ color: S.textPrimary }}>{(page * perPage) + 1}–{Math.min((page + 1) * perPage, sorted.length)}</strong> of <strong style={{ color: S.textPrimary }}>{sorted.length}</strong> entries
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <span style={{ fontSize: 11, color: S.textMuted }}>Rows:</span>
+          {PER_PAGE_OPTIONS.map(n => (
+            <button key={n} onClick={() => setPerPage(n)} style={{
+              fontSize: 11, padding: "2px 8px", borderRadius: 3, cursor: "pointer",
+              fontFamily: S.fontBase, border: `1px solid ${perPage === n ? S.accent : S.border}`,
+              background: perPage === n ? S.accent + "0D" : "transparent",
+              color: perPage === n ? S.accent : S.textSecondary,
+              fontWeight: perPage === n ? 600 : 400,
+            }}>{n}</button>
+          ))}
+        </div>
+      </div>
+
+      {/* Scrollable table */}
+      <div style={{ overflowX: "auto" }}>
+        <table style={{
+          width: "100%", borderCollapse: "collapse", fontSize: 12,
+          fontFamily: S.fontBase, minWidth: 900,
+        }}>
+          <thead>
+            <tr style={{ background: S.navy }}>
+              {columns.map(col => (
+                <th key={col.key}
+                  onClick={() => handleSort(col.key)}
+                  style={{
+                    padding: "10px 12px", textAlign: "left", fontWeight: 600,
+                    color: "rgba(255,255,255,0.9)", fontSize: 11, cursor: "pointer",
+                    borderRight: "1px solid rgba(255,255,255,0.08)",
+                    letterSpacing: 0.3, userSelect: "none",
+                    width: col.width, whiteSpace: "nowrap",
+                  }}>
+                  {col.label}<SortArrow col={col.key} />
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {pageData.map((row, idx) => (
+              <tr key={row.i}
+                onClick={() => onRowClick(row)}
+                style={{
+                  background: idx % 2 === 0 ? "#FFFFFF" : "#F8FAFB",
+                  cursor: "pointer", transition: "background 0.1s",
+                }}
+                onMouseEnter={e => e.currentTarget.style.background = "#EDF2F7"}
+                onMouseLeave={e => e.currentTarget.style.background = idx % 2 === 0 ? "#FFFFFF" : "#F8FAFB"}
+              >
+                <td style={{ padding: "9px 12px", fontWeight: 500, color: S.textPrimary, borderBottom: `1px solid ${S.borderLight}` }}>
+                  {row.co}
+                </td>
+                <td style={{ padding: "9px 12px", color: S.accent, borderBottom: `1px solid ${S.borderLight}`, fontWeight: 500 }}>
+                  <span style={{ display: "flex", alignItems: "center", gap: 5 }}>
+                    <span style={{ display: "-webkit-box", WebkitLineClamp: 1, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
+                      {row.t}
+                    </span>
+                    {row.u && <span style={{
+                      fontSize: 9, flexShrink: 0, color: '#FF0000', opacity: 0.7,
+                    }} title="Watch video">▶</span>}
+                  </span>
+                </td>
+                <td style={{ padding: "9px 12px", color: S.textSecondary, borderBottom: `1px solid ${S.borderLight}` }}>
+                  {row.cn}
+                </td>
+                <td style={{ padding: "9px 12px", borderBottom: `1px solid ${S.borderLight}` }}>
+                  <span style={{
+                    display: "inline-flex", alignItems: "center", gap: 4,
+                    fontSize: 11, color: REGION_COLORS[row.r] || S.textSecondary,
+                  }}>
+                    <span style={{
+                      width: 6, height: 6, borderRadius: 1.5,
+                      background: REGION_COLORS[row.r] || "#999",
+                    }} />
+                    {row.r}
+                  </span>
+                </td>
+                <td style={{ padding: "9px 12px", borderBottom: `1px solid ${S.borderLight}`, fontSize: 11, color: S.textSecondary }}>
+                  <span style={{ marginRight: 3 }}>{THEME_ICONS[row.th] || ""}</span>{row.th}
+                </td>
+                <td style={{ padding: "9px 12px", color: S.textSecondary, borderBottom: `1px solid ${S.borderLight}`, fontSize: 11 }}>
+                  {row.ft}
+                </td>
+                <td style={{ padding: "9px 12px", color: S.textSecondary, borderBottom: `1px solid ${S.borderLight}`, fontSize: 11 }}>
+                  {row.cr}
+                </td>
+                <td style={{ padding: "9px 12px", borderBottom: `1px solid ${S.borderLight}` }}>
+                  <span style={{
+                    fontSize: 10, padding: "2px 7px", borderRadius: 3,
+                    fontWeight: 500,
+                    background: row.st === "Verified" ? "#E6F4EC" : "#FFF8E1",
+                    color: row.st === "Verified" ? "#1B7340" : "#B8860B",
+                    border: `1px solid ${row.st === "Verified" ? "#B7DFC8" : "#F0DFA0"}`,
+                  }}>
+                    {row.st}
+                  </span>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Pagination */}
+      <div style={{
+        display: "flex", justifyContent: "space-between", alignItems: "center",
+        padding: "10px 16px", borderTop: `1px solid ${S.borderLight}`,
+        background: "#FAFBFC",
+      }}>
+        <div style={{ fontSize: 11, color: S.textMuted, fontFamily: S.fontBase }}>
+          Page {page + 1} of {totalPages}
+        </div>
+        <div style={{ display: "flex", gap: 4 }}>
+          <button onClick={() => setPage(0)} disabled={page === 0}
+            style={{ ...paginationBtn, opacity: page === 0 ? 0.3 : 1 }}>«</button>
+          <button onClick={() => setPage(p => Math.max(0, p - 1))} disabled={page === 0}
+            style={{ ...paginationBtn, opacity: page === 0 ? 0.3 : 1 }}>‹</button>
+
+          {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+            let pageNum;
+            if (totalPages <= 5) pageNum = i;
+            else if (page < 3) pageNum = i;
+            else if (page > totalPages - 4) pageNum = totalPages - 5 + i;
+            else pageNum = page - 2 + i;
+            return (
+              <button key={pageNum} onClick={() => setPage(pageNum)}
+                style={{
+                  ...paginationBtn,
+                  background: page === pageNum ? S.accent : "transparent",
+                  color: page === pageNum ? "white" : S.textSecondary,
+                  fontWeight: page === pageNum ? 600 : 400,
+                }}>{pageNum + 1}</button>
+            );
+          })}
+
+          <button onClick={() => setPage(p => Math.min(totalPages - 1, p + 1))} disabled={page >= totalPages - 1}
+            style={{ ...paginationBtn, opacity: page >= totalPages - 1 ? 0.3 : 1 }}>›</button>
+          <button onClick={() => setPage(totalPages - 1)} disabled={page >= totalPages - 1}
+            style={{ ...paginationBtn, opacity: page >= totalPages - 1 ? 0.3 : 1 }}>»</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+const paginationBtn = {
+  padding: "4px 10px", fontSize: 12, border: `1px solid ${S.border}`,
+  borderRadius: 3, cursor: "pointer", fontFamily: S.fontBase,
+  background: "transparent", color: S.textSecondary,
+};
+
+/* ─── DETAIL MODAL ─── */
+function DetailModal({ entry, onClose }) {
+  if (!entry) return null;
+  const color = REGION_COLORS[entry.r] || S.accent;
+
+  return (
+    <div onClick={onClose} style={{
+      position: "fixed", inset: 0, background: "rgba(0,22,44,0.55)",
+      display: "flex", alignItems: "center", justifyContent: "center",
+      zIndex: 1000, padding: 20,
+    }}>
+      <div onClick={e => e.stopPropagation()} style={{
+        background: S.cardBg, borderRadius: 6, maxWidth: 600, width: "100%",
+        maxHeight: "80vh", overflowY: "auto",
+        boxShadow: "0 20px 50px rgba(0,0,0,0.25)",
+        border: `1px solid ${S.border}`,
+      }}>
+        <div style={{
+          padding: "20px 24px", borderBottom: `3px solid ${color}`,
+        }}>
+          <div style={{
+            fontSize: 10.5, color: color, fontWeight: 600, fontFamily: S.fontBase,
+            textTransform: "uppercase", letterSpacing: 0.8, marginBottom: 6,
+          }}>
+            {entry.co} — {entry.cn}
+          </div>
+          <h2 style={{
+            fontSize: 18, fontWeight: 600, color: S.textPrimary,
+            fontFamily: S.fontSerif, margin: 0, lineHeight: 1.4,
+          }}>{entry.t}</h2>
+        </div>
+
+        <div style={{ padding: "18px 24px" }}>
+          <p style={{
+            fontSize: 13.5, color: S.textSecondary, lineHeight: 1.65,
+            margin: "0 0 20px 0", fontFamily: S.fontBase,
+          }}>{entry.d}</p>
+
+          <div style={{
+            display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px 20px",
+          }}>
+            {[
+              ['Region', entry.r],
+              ['Theme', entry.th],
+              ['Sub-sector', entry.ss],
+              ['Farmer Type', entry.ft],
+              ['Farmer Name(s)', entry.fn],
+              ['Crop / Activity', entry.cr],
+              ['Status', entry.st],
+            ].map(([label, val]) => val && (
+              <div key={label}>
+                <div style={{ fontSize: 10, color: S.textMuted, fontWeight: 600, textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 2 }}>
+                  {label}
+                </div>
+                <div style={{ fontSize: 12.5, color: S.textPrimary }}>
+                  {label === 'Status' ? (
+                    <span style={{
+                      padding: "2px 8px", borderRadius: 3, fontSize: 11,
+                      background: val === "Verified" ? "#E6F4EC" : "#FFF8E1",
+                      color: val === "Verified" ? "#1B7340" : "#B8860B",
+                    }}>{val}</span>
+                  ) : (
+                    <span style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>
+                      {label === 'Region' && <span style={{ width: 6, height: 6, borderRadius: 1.5, background: REGION_COLORS[val] }} />}
+                      {val}
+                    </span>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Embedded Video Player */}
+        {entry.u && (
+          <div style={{
+            padding: "0", borderTop: `1px solid ${S.borderLight}`,
+            background: "#000",
+          }}>
+            <div style={{ position: "relative", paddingBottom: "56.25%", height: 0, overflow: "hidden" }}>
+              <iframe
+                src={`https://www.youtube.com/embed/${(entry.u.match(/[?&]v=([^&]+)/) || [])[1] || ''}`}
+                style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", border: "none" }}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                title={entry.t}
+              />
+            </div>
+            <div style={{
+              padding: "10px 24px", background: "#F8FAFB",
+              display: "flex", justifyContent: "space-between", alignItems: "center",
+            }}>
+              <a href={entry.u} target="_blank" rel="noopener noreferrer" style={{
+                fontSize: 12, color: S.accent, fontFamily: S.fontBase, textDecoration: "none",
+              }}>
+                Open on YouTube ↗
+              </a>
+            </div>
+          </div>
+        )}
+
+        <div style={{
+          padding: "14px 24px", borderTop: `1px solid ${S.borderLight}`,
+          display: "flex", justifyContent: "flex-end", gap: 10,
+        }}>
+          <button onClick={onClose} style={{
+            padding: "8px 20px", fontSize: 12, fontFamily: S.fontBase,
+            border: `1px solid ${S.border}`, borderRadius: 4,
+            background: "transparent", cursor: "pointer", color: S.textSecondary,
+          }}>Close</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════
+   MAIN APPLICATION
+   ═══════════════════════════════════════════ */
+function FarmerTestimonialsExplorer() {
+  const [filterRegion, setFilterRegion] = useState(null);
+  const [filterTheme, setFilterTheme] = useState(null);
+  const [filterCountry, setFilterCountry] = useState(null);
+  const [filterCompany, setFilterCompany] = useState(null);
+  const [search, setSearch] = useState("");
+  const [selectedEntry, setSelectedEntry] = useState(null);
+
+  const allCountries = useMemo(() => [...new Set(D.map(d => d.cn))].sort(), []);
+  const allCompanies = useMemo(() => [...new Set(D.map(d => d.co))].sort(), []);
+
+  const filtered = useMemo(() => {
+    return D.filter(d => {
+      if (filterRegion && d.r !== filterRegion) return false;
+      if (filterTheme && d.th !== filterTheme) return false;
+      if (filterCountry && d.cn !== filterCountry) return false;
+      if (filterCompany && d.co !== filterCompany) return false;
+      if (search) {
+        const s = search.toLowerCase();
+        return (d.co + d.t + d.cn + d.fn + d.cr + d.d + d.th).toLowerCase().includes(s);
+      }
+      return true;
+    });
+  }, [filterRegion, filterTheme, filterCountry, filterCompany, search]);
+
+  const regionCounts = useMemo(() => {
+    const c = {};
+    D.forEach(d => { c[d.r] = (c[d.r] || 0) + 1; });
+    return c;
+  }, []);
+
+  const themeCounts = useMemo(() => {
+    const c = {};
+    D.forEach(d => { c[d.th] = (c[d.th] || 0) + 1; });
+    return c;
+  }, []);
+
+  const countryCounts = useMemo(() => {
+    const c = {};
+    D.forEach(d => { c[d.cn] = (c[d.cn] || 0) + 1; });
+    return c;
+  }, []);
+
+  const companyCounts = useMemo(() => {
+    const c = {};
+    D.forEach(d => { c[d.co] = (c[d.co] || 0) + 1; });
+    return c;
+  }, []);
+
+  const clearAll = () => {
+    setFilterRegion(null);
+    setFilterTheme(null);
+    setFilterCountry(null);
+    setFilterCompany(null);
+    setSearch("");
+  };
+
+  const hasFilters = filterRegion || filterTheme || filterCountry || filterCompany || search;
+
+  return (
+    <div style={{
+      fontFamily: S.fontBase, background: S.bg,
+      minHeight: "100vh", color: S.textPrimary,
+    }}>
+      {/* Google Font */}
+      <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Libre+Franklin:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+      {/* ── HEADER ── */}
+      <header style={{
+        background: S.navy, padding: "20px 0 18px",
+        borderBottom: "3px solid #0071BC",
+      }}>
+        <div style={{ maxWidth: 1100, margin: "0 auto", padding: "0 24px" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
+            <div>
+              <div style={{
+                fontSize: 10.5, color: "rgba(255,255,255,0.45)", fontFamily: S.fontBase,
+                letterSpacing: 1.5, textTransform: "uppercase", fontWeight: 500, marginBottom: 6,
+              }}>
+                Agricultural Technology Evidence Base
+              </div>
+              <h1 style={{
+                fontSize: 22, fontWeight: 700, color: "white", margin: 0,
+                fontFamily: S.fontSerif, lineHeight: 1.3,
+              }}>
+                Farmer Testimonials Database
+              </h1>
+              <p style={{
+                fontSize: 12.5, color: "rgba(255,255,255,0.55)", margin: "6px 0 0",
+                fontFamily: S.fontBase, lineHeight: 1.5,
+              }}>
+                Searchable repository of farmer interviews documenting agtech adoption and impact across developing regions
+              </p>
+            </div>
+            <div style={{ textAlign: "right" }}>
+              <div style={{
+                fontSize: 10, color: "rgba(255,255,255,0.35)", fontFamily: S.fontBase,
+                letterSpacing: 0.5,
+              }}>
+                Last Updated: March 2026
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      {/* ── MAIN CONTENT ── */}
+      <div style={{ maxWidth: 1100, margin: "0 auto", padding: "20px 24px 40px" }}>
+
+        {/* Stats Banner */}
+        <StatsBanner data={D} />
+
+        {/* Map */}
+        <div style={{ marginTop: 16 }}>
+          <WorldMap data={filtered} filterCountry={filterCountry} onCountryClick={setFilterCountry} />
+        </div>
+
+        {/* Coverage Bars */}
+        <div style={{ marginTop: 16 }}>
+          <CoverageBars data={D} filterRegion={filterRegion} onRegionClick={setFilterRegion} />
+        </div>
+
+        {/* ── FILTER BAR ── */}
+        <div style={{
+          marginTop: 16, display: "flex", alignItems: "center", gap: 8,
+          flexWrap: "wrap", padding: "12px 16px",
+          background: S.cardBg, border: `1px solid ${S.border}`, borderRadius: 4,
+        }}>
+          <div style={{
+            fontSize: 10.5, color: S.textMuted, fontWeight: 600,
+            textTransform: "uppercase", letterSpacing: 0.8, marginRight: 4,
+          }}>Filters</div>
+
+          <FilterDropdown label="Region" options={REGIONS} value={filterRegion}
+            onChange={setFilterRegion} counts={regionCounts} colorMap={REGION_COLORS} />
+          <FilterDropdown label="Theme" options={THEMES} value={filterTheme}
+            onChange={setFilterTheme} counts={themeCounts} />
+          <FilterDropdown label="Country" options={allCountries} value={filterCountry}
+            onChange={setFilterCountry} counts={countryCounts} />
+          <FilterDropdown label="Company" options={allCompanies} value={filterCompany}
+            onChange={setFilterCompany} counts={companyCounts} />
+
+          {/* Search */}
+          <div style={{ marginLeft: "auto", position: "relative" }}>
+            <input
+              type="text" value={search} onChange={e => setSearch(e.target.value)}
+              placeholder="Search entries..."
+              style={{
+                padding: "7px 12px 7px 30px", fontSize: 12.5, fontFamily: S.fontBase,
+                border: `1px solid ${S.border}`, borderRadius: 4, width: 180,
+                outline: "none", background: S.cardBg, color: S.textPrimary,
+              }}
+            />
+            <span style={{
+              position: "absolute", left: 10, top: "50%", transform: "translateY(-50%)",
+              fontSize: 13, color: S.textMuted, pointerEvents: "none",
+            }}>⌕</span>
+          </div>
+
+          {hasFilters && (
+            <button onClick={clearAll} style={{
+              fontSize: 11, color: S.accent, background: "none", border: "none",
+              cursor: "pointer", fontFamily: S.fontBase, fontWeight: 500,
+              textDecoration: "underline",
+            }}>Clear all</button>
+          )}
+        </div>
+
+        {/* Active Filters Summary */}
+        {hasFilters && (
+          <div style={{
+            marginTop: 8, fontSize: 12, color: S.textSecondary, fontFamily: S.fontBase,
+            padding: "6px 16px", background: S.accent + "08", borderRadius: 4,
+            border: `1px solid ${S.accent}22`,
+          }}>
+            Showing <strong style={{ color: S.textPrimary }}>{filtered.length}</strong> of {D.length} entries
+            {filterRegion && <> · Region: <strong>{filterRegion}</strong></>}
+            {filterTheme && <> · Theme: <strong>{filterTheme}</strong></>}
+            {filterCountry && <> · Country: <strong>{filterCountry}</strong></>}
+            {filterCompany && <> · Company: <strong>{filterCompany}</strong></>}
+            {search && <> · Search: "<strong>{search}</strong>"</>}
+          </div>
+        )}
+
+        {/* ── DATA TABLE ── */}
+        <div style={{ marginTop: 16 }}>
+          {filtered.length > 0 ? (
+            <DataTable data={filtered} onRowClick={setSelectedEntry} />
+          ) : (
+            <div style={{
+              textAlign: "center", padding: "48px 20px", background: S.cardBg,
+              border: `1px solid ${S.border}`, borderRadius: 4,
+            }}>
+              <div style={{ fontSize: 14, color: S.textMuted, marginBottom: 12 }}>
+                No entries match your current filters.
+              </div>
+              <button onClick={clearAll} style={{
+                fontSize: 12, color: S.accent, background: "none",
+                border: `1px solid ${S.accent}`, padding: "6px 16px",
+                borderRadius: 3, cursor: "pointer",
+              }}>Clear all filters</button>
+            </div>
+          )}
+        </div>
+
+        {/* ── FOOTER ── */}
+        <footer style={{
+          marginTop: 32, paddingTop: 18, borderTop: `2px solid ${S.navy}`,
+          display: "flex", justifyContent: "space-between", alignItems: "flex-start",
+          flexWrap: "wrap", gap: 16, paddingBottom: 24,
+        }}>
+          <div>
+            <div style={{ fontSize: 12, fontWeight: 600, color: S.textPrimary, fontFamily: S.fontSerif, marginBottom: 4 }}>
+              Farmer Testimonials Database
+            </div>
+            <div style={{ fontSize: 11.5, color: S.textMuted, lineHeight: 1.6 }}>
+              A searchable, categorized repository of farmer interviews across developing regions,<br />
+              documenting agtech adoption and impact. Database updated periodically.
+            </div>
+          </div>
+          <div style={{ fontSize: 10.5, color: S.textMuted, textAlign: "right" }}>
+            <div>{D.length} entries · {allCountries.length} countries · {allCompanies.length} companies</div>
+            <div style={{ marginTop: 2 }}>Last updated: March 2026</div>
+          </div>
+        </footer>
+      </div>
+
+      {/* Modal */}
+      <DetailModal entry={selectedEntry} onClose={() => setSelectedEntry(null)} />
+    </div>
+  );
+}
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(React.createElement(FarmerTestimonialsExplorer));
+  </script>
+</body>
+</html>
