@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Farmer Testimonials Database — Agricultural Technology Evidence Base</title>
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+  <style>
+    :root{--navy:#002244;--navy-deep:#001529;--navy-light:#003366;--blue:#0071BC;--blue-hover:#005A96;--blue-pale:#E8F4FD;--slate:#3D4F5F;--text:#1A202C;--text-sec:#5A6577;--text-muted:#8896A7;--border:#D4DAE0;--border-light:#E8ECF0;--bg:#F4F6F8;--card:#FFF;--serif:'Libre Baskerville',Georgia,serif;--sans:'DM Sans',system-ui,sans-serif;}
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+    body{font-family:var(--sans);background:var(--bg);color:var(--text);overflow-x:hidden;}
+    a{color:var(--blue);text-decoration:none;}a:hover{text-decoration:underline;}
+    .topnav{background:var(--navy-deep);border-bottom:1px solid rgba(255,255,255,.06);padding:10px 0;}
+    .topnav-inner{max-width:1200px;margin:0 auto;padding:0 32px;display:flex;justify-content:space-between;align-items:center;}
+    .topnav-label{font-size:10px;color:rgba(255,255,255,.4);letter-spacing:2px;text-transform:uppercase;font-weight:500;}
+    .topnav-links{display:flex;gap:24px;}.topnav-links a{font-size:11.5px;color:rgba(255,255,255,.55);text-decoration:none;font-weight:500;transition:color .15s;}.topnav-links a:hover{color:white;text-decoration:none;}
+    .hero{position:relative;background:var(--navy);overflow:hidden;min-height:420px;display:flex;align-items:center;}
+    .hero-mosaic{position:absolute;inset:0;display:grid;grid-template-columns:repeat(6,1fr);grid-template-rows:1fr 1fr;gap:3px;opacity:.18;}
+    .hero-mosaic img{width:100%;height:100%;object-fit:cover;}
+    .hero-gradient{position:absolute;inset:0;background:linear-gradient(135deg,rgba(0,22,44,.92),rgba(0,34,68,.78) 50%,rgba(0,50,100,.65));}
+    .hero-content{position:relative;z-index:2;max-width:1200px;margin:0 auto;padding:60px 32px 50px;}
+    .hero-eyebrow{font-size:11px;color:rgba(255,255,255,.45);letter-spacing:2.5px;text-transform:uppercase;font-weight:500;margin-bottom:14px;}
+    .hero-title{font-family:var(--serif);font-size:38px;font-weight:700;color:white;line-height:1.25;max-width:700px;}
+    .hero-sub{font-size:16px;color:rgba(255,255,255,.6);margin-top:14px;line-height:1.65;max-width:560px;}
+    .hero-cta{display:inline-flex;align-items:center;gap:8px;margin-top:24px;padding:12px 28px;background:var(--blue);color:white;border-radius:4px;font-size:14px;font-weight:600;text-decoration:none;transition:background .15s;}
+    .hero-cta:hover{background:var(--blue-hover);text-decoration:none;}
+    .hero-rule{position:absolute;bottom:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--blue),#00A3E0,var(--blue));}
+    .stats{background:white;border-bottom:1px solid var(--border);}
+    .stats-inner{max-width:1200px;margin:0 auto;padding:0 32px;display:flex;}
+    .stat{flex:1;padding:20px 0;text-align:center;border-right:1px solid var(--border-light);}.stat:last-child{border-right:none;}
+    .stat-val{font-family:var(--serif);font-size:32px;font-weight:700;color:var(--navy);line-height:1;}
+    .stat-lbl{font-size:10px;color:var(--text-muted);letter-spacing:1px;text-transform:uppercase;margin-top:4px;font-weight:500;}
+    .about{max-width:1200px;margin:0 auto;padding:56px 32px;}
+    .about-grid{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center;}
+    .about-eyebrow{font-size:10px;color:var(--blue);letter-spacing:2px;text-transform:uppercase;font-weight:600;margin-bottom:10px;}
+    .about h2{font-family:var(--serif);font-size:26px;font-weight:700;color:var(--text);line-height:1.35;margin-bottom:16px;}
+    .about p{font-size:15px;color:var(--text-sec);line-height:1.75;margin-bottom:14px;}
+    .about-img{border-radius:6px;overflow:hidden;box-shadow:0 8px 30px rgba(0,0,0,.08);border:1px solid var(--border);}
+    .about-img-grid{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:3px;}
+    .about-img-grid img{width:100%;height:160px;object-fit:cover;}
+    .about-highlight{margin-top:20px;padding:16px 20px;background:var(--blue-pale);border-left:3px solid var(--blue);border-radius:0 4px 4px 0;font-size:13.5px;color:var(--slate);line-height:1.6;}
+    .section-wrap{max-width:1200px;margin:0 auto;padding:0 32px;}
+    .sec-head{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:20px;padding-bottom:12px;border-bottom:2px solid var(--navy);}
+    .sec-head h2{font-family:var(--serif);font-size:20px;font-weight:700;}.sec-head .sec-hint{font-size:12px;color:var(--text-muted);}
+    .map-wrap{background:white;border:1px solid var(--border);border-radius:6px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.04);}
+    .map-svg-wrap{position:relative;}.map-svg-wrap svg{display:block;width:100%;background:#F7F9FB;}
+    .map-tt{position:absolute;pointer-events:none;background:rgba(0,22,44,.92);color:white;padding:8px 14px;border-radius:4px;font-size:12.5px;box-shadow:0 4px 14px rgba(0,0,0,.2);transform:translate(-50%,-110%);white-space:nowrap;z-index:10;}
+    .map-tt b{font-weight:600;}.map-tt small{display:block;font-size:11px;opacity:.6;margin-top:1px;}
+    .map-legend{padding:10px 20px;border-top:1px solid var(--border-light);display:flex;gap:20px;background:#FAFBFC;}
+    .map-legend i{display:inline-block;width:12px;height:12px;border-radius:2px;vertical-align:middle;margin-right:5px;}
+    .map-legend span{font-size:11px;color:var(--text-sec);}
+    .cpanel{margin-top:20px;background:white;border:1px solid var(--border);border-radius:6px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.04);animation:si .25s ease;}
+    @keyframes si{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+    .cpanel-head{padding:16px 24px;background:var(--navy);display:flex;justify-content:space-between;align-items:center;}
+    .cpanel-head h3{font-family:var(--serif);font-size:18px;color:white;font-weight:700;}
+    .cpanel-head small{font-size:12px;color:rgba(255,255,255,.45);margin-left:10px;}
+    .cpanel-close{background:none;border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.7);padding:4px 14px;border-radius:3px;font-size:11px;cursor:pointer;font-family:var(--sans);}
+    .cpanel-close:hover{background:rgba(255,255,255,.1);color:white;}
+    .vgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:18px;padding:20px 24px;}
+    .vcard{border:1px solid var(--border-light);border-radius:5px;overflow:hidden;cursor:pointer;transition:all .15s;background:white;}
+    .vcard:hover{border-color:var(--blue);box-shadow:0 4px 16px rgba(0,113,188,.1);transform:translateY(-2px);}
+    .vthumb{position:relative;padding-bottom:56.25%;background:#0a0a0a;overflow:hidden;}
+    .vthumb img{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;}
+    .vplay{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:54px;height:54px;background:rgba(255,0,0,.9);border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 12px rgba(0,0,0,.3);transition:transform .15s;}
+    .vcard:hover .vplay{transform:translate(-50%,-50%) scale(1.08);}
+    .vplay::after{content:'';width:0;height:0;border-left:17px solid white;border-top:11px solid transparent;border-bottom:11px solid transparent;margin-left:3px;}
+    .vinfo{padding:14px 16px;}.vco{font-size:10px;color:var(--blue);font-weight:600;letter-spacing:.8px;text-transform:uppercase;margin-bottom:5px;}
+    .vtitle{font-family:var(--serif);font-size:14px;font-weight:700;color:var(--text);line-height:1.4;margin-bottom:6px;}
+    .vdesc{font-size:12.5px;color:var(--text-sec);line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+    .vmeta{padding:8px 16px;border-top:1px solid var(--border-light);display:flex;gap:6px;flex-wrap:wrap;}
+    .vtag{font-size:10px;padding:2px 8px;border-radius:3px;background:var(--bg);color:var(--text-sec);border:1px solid var(--border-light);}
+    .vtag-th{background:var(--blue-pale);color:var(--blue);border-color:#B8D8F0;}
+    .modal-bg{position:fixed;inset:0;background:rgba(0,15,30,.75);display:flex;align-items:center;justify-content:center;z-index:1000;padding:20px;animation:fi .15s;}
+    @keyframes fi{from{opacity:0}to{opacity:1}}
+    .modal-box{background:white;border-radius:8px;max-width:820px;width:100%;max-height:92vh;overflow-y:auto;box-shadow:0 24px 60px rgba(0,0,0,.3);animation:mu .2s ease;}
+    @keyframes mu{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+    .modal-vid{position:relative;padding-bottom:56.25%;background:#000;}
+    .modal-vid iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:none;}
+    .modal-body{padding:22px 28px;}
+    .modal-co{font-size:11px;color:var(--blue);font-weight:600;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;}
+    .modal-t{font-family:var(--serif);font-size:21px;font-weight:700;color:var(--text);line-height:1.35;margin-bottom:10px;}
+    .modal-d{font-size:14px;color:var(--text-sec);line-height:1.65;margin-bottom:18px;}
+    .modal-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;}
+    .modal-grid label{display:block;font-size:9px;color:var(--text-muted);font-weight:600;text-transform:uppercase;letter-spacing:.6px;margin-bottom:2px;}
+    .modal-grid span{font-size:13px;color:var(--text);}
+    .modal-foot{padding:14px 28px;border-top:1px solid var(--border-light);display:flex;justify-content:space-between;align-items:center;}
+    .btn-yt{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border-radius:4px;font-size:12.5px;font-weight:600;text-decoration:none;background:#FF0000;color:white;transition:opacity .15s;}.btn-yt:hover{opacity:.85;text-decoration:none;}
+    .btn-close{padding:9px 22px;font-size:12px;font-family:var(--sans);border:1px solid var(--border);border-radius:4px;background:transparent;cursor:pointer;color:var(--text-sec);}.btn-close:hover{background:var(--bg);}
+    .tbl-wrap{background:white;border:1px solid var(--border);border-radius:6px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.04);margin-bottom:8px;}
+    .tbl-bar{padding:12px 20px;border-bottom:1px solid var(--border-light);display:flex;justify-content:space-between;align-items:center;background:#FAFBFC;}
+    .tbl-bar h3{font-family:var(--serif);font-size:15px;font-weight:700;}
+    .search-box{padding:7px 12px 7px 32px;font-size:12.5px;font-family:var(--sans);border:1px solid var(--border);border-radius:4px;width:220px;outline:none;background:white url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%238896A7' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'/%3E%3C/svg%3E") 10px center no-repeat;}.search-box:focus{border-color:var(--blue);}
+    table.dtbl{width:100%;border-collapse:collapse;font-size:13px;}
+    .dtbl thead th{padding:10px 14px;text-align:left;font-weight:600;font-size:10.5px;color:rgba(255,255,255,.85);background:var(--navy);letter-spacing:.4px;text-transform:uppercase;white-space:nowrap;}
+    .dtbl tbody tr{cursor:pointer;transition:background .1s;}.dtbl tbody tr:nth-child(even){background:#F8FAFB;}.dtbl tbody tr:hover{background:#EDF2F7;}
+    .dtbl td{padding:10px 14px;border-bottom:1px solid var(--border-light);}
+    .td-t{color:var(--blue);font-weight:500;}
+    .nav-active{color:white !important;border-bottom:2px solid var(--blue);padding-bottom:6px;}
+    .page-head{max-width:1200px;margin:0 auto;padding:32px 32px 0;display:flex;align-items:center;gap:12px;}
+    .back-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border:1px solid var(--border);border-radius:4px;font-size:12px;color:var(--text-sec);background:white;cursor:pointer;font-family:var(--sans);transition:all .15s;text-decoration:none;}
+    .back-btn:hover{background:var(--bg);color:var(--text);text-decoration:none;}
+    .view-link{display:inline-flex;align-items:center;gap:4px;font-size:13px;color:var(--blue);font-weight:600;cursor:pointer;border:none;background:none;font-family:var(--sans);padding:0;text-decoration:none;}
+    .view-link:hover{text-decoration:underline;}
+    .page-title{font-family:var(--serif);font-size:28px;font-weight:700;color:var(--text);}
+    .full-about{max-width:1200px;margin:0 auto;padding:32px;}.full-about h2{font-family:var(--serif);font-size:22px;font-weight:700;margin:28px 0 14px;color:var(--text);}.full-about h2:first-child{margin-top:0;}
+    .full-about p{font-size:15px;color:var(--text-sec);line-height:1.8;margin-bottom:14px;max-width:800px;}
+    .site-footer{max-width:1200px;margin:40px auto 0;padding:24px 32px 40px;border-top:2px solid var(--navy);display:flex;justify-content:space-between;flex-wrap:wrap;gap:16px;}
+    .footer-t{font-family:var(--serif);font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;}
+    .footer-p{font-size:12px;color:var(--text-muted);line-height:1.6;}
+    .footer-r{font-size:11px;color:var(--text-muted);text-align:right;}
+    .ld{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;background:var(--navy);color:white;font-family:var(--serif);}
+    .ld h1{font-size:24px;margin-bottom:8px;}.ld p{font-size:14px;opacity:.5;margin-bottom:24px;}
+    .lbar{width:200px;height:3px;background:rgba(255,255,255,.12);border-radius:2px;overflow:hidden;}
+    .lbar-in{width:40%;height:100%;background:var(--blue);border-radius:2px;animation:ls 1.2s ease-in-out infinite alternate;}
+    @keyframes ls{from{transform:translateX(0)}to{transform:translateX(150%)}}
+    @media(max-width:768px){.hero-title{font-size:26px;}.about-grid{grid-template-columns:1fr;}.stats-inner{flex-wrap:wrap;}.stat{flex:none;width:50%;}.modal-grid{grid-template-columns:1fr 1fr;}.vgrid{grid-template-columns:1fr;}}
+  </style>
+</head>
+<body>
+  <div id="root"><div class="ld"><h1>Farmer Testimonials Database</h1><p>Loading...</p><div class="lbar"><div class="lbar-in"></div></div></div></div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js"></script>
+  <script type="text/babel">
+const{useState,useMemo,useRef,useEffect}=React;const h=React.createElement;
+const D=[
+  {id:1,co:'ACRE Africa',t:"ACRE Africa's Impact on Women Inclusion to Drive Insurance Uptake",d:"ACRE Africa's impact on women inclusion to drive insurance uptake among female smallholder farmers across Kenya's agricultural communities.",cn:'Kenya',r:'Sub-Saharan Africa',th:'Insurance & Risk Management',ft:'Smallholder',fn:'Multiple Farmers',cr:'Mixed crops',u:'https://www.youtube.com/watch?v=xR_84_28s5E',la:[0.5,37.5]},
+  {id:2,co:'ACRE Africa',t:'Yes, Agriculture Insurance Works!',d:'ACRE Africa demonstrates how agricultural insurance products are making a real difference for smallholder farmers, protecting their livelihoods against climate and market risks.',cn:'Kenya',r:'Sub-Saharan Africa',th:'Insurance & Risk Management',ft:'Smallholder',fn:'Multiple Farmers',cr:'Mixed crops',u:'https://www.youtube.com/watch?v=Les3DvJCpnE',la:[0.5,37.5]},
+  {id:3,co:'ACRE Africa',t:'Empowering Smallholder Farmers through Agricultural Insurance',d:'A comprehensive look at how ACRE Africa is empowering smallholder farmers through accessible agricultural insurance products that protect against crop failure and climate shocks.',cn:'Kenya',r:'Sub-Saharan Africa',th:'Insurance & Risk Management',ft:'Smallholder',fn:'Multiple Farmers',cr:'Mixed crops',u:'https://www.youtube.com/watch?v=btXcvz1tRdQ',la:[0.5,37.5]},
+  {id:4,co:'AMTech',t:'Amtech Technologies: Digitization of Dairy',d:'A dairy farmer discusses inefficiencies in milk pricing and how the EesyMa software solution created digital information systems for accurate measurement.',cn:'Kenya',r:'Sub-Saharan Africa',th:'Dairy & Livestock Technology',ft:'Smallholder',fn:'Dairy Farmer',cr:'Dairy',u:'https://www.youtube.com/watch?v=HD5F2gTXqGE',la:[0.5,37.5]},
+  {id:5,co:'Apollo Agriculture',t:'Meet Jonah, An Apollo Farmer',d:"Jonah shares his family's farming challenges, how he discovered Apollo Agriculture, and the efficiency improvements in accessing inputs and agricultural credit.",cn:'Kenya',r:'Sub-Saharan Africa',th:'Farm Inputs & Credit',ft:'Smallholder',fn:'Jonah',cr:'Maize',u:'https://www.youtube.com/watch?v=FQAaeDqsnWI',la:[0.5,37.5]},
+  {id:6,co:'Apollo Agriculture',t:'Protus \u2014 An Apollo Agriculture Super Farmer',d:"Protus, recognized as an Apollo Agriculture Super Farmer, shares his experience with the platform's farming support services and yield improvements.",cn:'Kenya',r:'Sub-Saharan Africa',th:'Farm Inputs & Credit',ft:'Smallholder',fn:'Protus',cr:'Maize',u:'https://www.youtube.com/watch?v=tGJDdB18l9c',la:[0.5,37.5]},
+  {id:7,co:'Apollo Agriculture',t:'Supporting Our Agrodealer Community',d:'Julia Barasa discusses her role as an agrodealer in the Apollo Agriculture community and how the platform supports agricultural input distribution.',cn:'Kenya',r:'Sub-Saharan Africa',th:'Farm Inputs & Credit',ft:'Agrodealer',fn:'Julia Barasa',cr:'Agricultural inputs',u:'https://www.youtube.com/watch?v=tf-knqmhC_E',la:[0.5,37.5]},
+  {id:8,co:'Apollo Agriculture',t:"Apollo Feature on Kenya's Gold \u2014 Maize Farming (Citizen TV)",d:"Apollo Agriculture featured on Kenya's Citizen TV covering maize farming innovations and their direct impact on Kenyan smallholder productivity.",cn:'Kenya',r:'Sub-Saharan Africa',th:'Farm Inputs & Credit',ft:'Smallholder',fn:'Multiple Farmers',cr:'Maize',u:'https://www.youtube.com/watch?v=yYG8x1QHn2M',la:[0.5,37.5]},
+  {id:9,co:'DigiCow',t:'Made in Kenya: DigiCow Helps Dairy Farmers Store and Access Data',d:"DigiCow helps dairy farmers store and access critical herd data, as featured on CitizenTV Kenya's 'Made in Kenya' segment.",cn:'Kenya',r:'Sub-Saharan Africa',th:'Dairy & Livestock Technology',ft:'Smallholder',fn:'Multiple Farmers',cr:'Dairy',u:'https://www.youtube.com/watch?v=7SVJE5YFbsE',la:[0.5,37.5]},
+  {id:10,co:'EzyAgric',t:'Farmer in Luwero District \u2014 How EzyAgric App Changed His Farming',d:'A farmer in Luwero District describes how the EzyAgric App transformed his farming practices, from planting decisions to market timing.',cn:'Uganda',r:'Sub-Saharan Africa',th:'Digital Advisory & Extension',ft:'Smallholder',fn:'Luwero Farmer',cr:'Mixed crops',u:'https://www.youtube.com/watch?v=WsKjvNgo9Ms',la:[1,32]},
+  {id:11,co:'Farmerline',t:'Farmer Profile \u2014 Episode 1: Ben Owusu',d:'Episode 1 of the Farmerline Farmer Profile series, featuring Ben Owusu and his experience accessing market information and agricultural advisory.',cn:'Ghana',r:'Sub-Saharan Africa',th:'Market Access & Information',ft:'Smallholder',fn:'Ben Owusu',cr:'Cocoa',u:'https://www.youtube.com/watch?v=MKbMr6m6BeM',la:[7.5,-1.5]},
+  {id:12,co:'Farmerline',t:'Testimonial: Kwesi Mensah',d:'Kwesi Mensah shares his testimonial about working with Farmerline and the impact on his farming operations, market linkages, and income stability.',cn:'Ghana',r:'Sub-Saharan Africa',th:'Market Access & Information',ft:'Smallholder',fn:'Kwesi Mensah',cr:'Cocoa',u:'https://www.youtube.com/watch?v=NFOehSruekc',la:[7.5,-1.5]},
+  {id:13,co:'Farmerline',t:'Testimonial: Pious Ofosu',d:"Pious Ofosu discusses how Farmerline's platform improved his access to fair markets, pricing transparency, and timely agricultural information.",cn:'Ghana',r:'Sub-Saharan Africa',th:'Market Access & Information',ft:'Smallholder',fn:'Pious Ofosu',cr:'Cocoa',u:'https://www.youtube.com/watch?v=LNJUSqQJ8i0',la:[7.5,-1.5]},
+  {id:14,co:'Farmerline',t:'The Story of Safia Iddrisu',d:"Safia Iddrisu's story of how Farmerline's agricultural services transformed her farming livelihood and connected her to broader supply chains in Ghana.",cn:'Ghana',r:'Sub-Saharan Africa',th:'Market Access & Information',ft:'Smallholder',fn:'Safia Iddrisu',cr:'Mixed crops',u:'https://www.youtube.com/watch?v=L95lUT3jbZ4',la:[7.5,-1.5]},
+  {id:15,co:'Farmerline',t:"From Zero to Sheroe \u2014 Salima Zachari's Story",d:"Salima Zachari's empowering journey from subsistence challenges to commercial success through Farmerline's support network and digital tools.",cn:'Ghana',r:'Sub-Saharan Africa',th:'Market Access & Information',ft:'Smallholder',fn:'Salima Zachari',cr:'Mixed crops',u:'https://www.youtube.com/watch?v=2jY0N2S6Yfs',la:[7.5,-1.5]},
+  {id:16,co:'Farmerline',t:'Testimonial: Gnessois Kpakpo Johassien',d:"Gnessois Kpakpo Johassien shares their experience with Farmerline's cocoa farmer services in C\u00f4te d'Ivoire, including traceability and premium access.",cn:"C\u00f4te d'Ivoire",r:'Sub-Saharan Africa',th:'Market Access & Information',ft:'Smallholder',fn:'Gnessois Kpakpo Johassien',cr:'Cocoa',u:'https://www.youtube.com/watch?v=rr4l87JS0C0',la:[7.5,-5.5]},
+  {id:17,co:'Hello Tractor',t:"Hello Tractor Featured on CNN's Inside Africa",d:"Hello Tractor's tractor-sharing platform featured on CNN's Inside Africa, showcasing how 'Uber for tractors' is democratizing access to farm machinery.",cn:'Nigeria',r:'Sub-Saharan Africa',th:'Mechanization & Equipment',ft:'Smallholder',fn:'Multiple Farmers',cr:'Mixed crops',u:'https://www.youtube.com/watch?v=tbXvwF98pTI',la:[9,7.5]},
+  {id:18,co:'SunCulture',t:'Farming with Freedom: Solar & Drip Irrigation \u2014 Ralph Gates Farm',d:"How solar-powered drip irrigation through SunCulture empowered Ralph Gates' farm operations and water management.",cn:'Kenya',r:'Sub-Saharan Africa',th:'Solar & Irrigation Technology',ft:'Smallholder',fn:'Ralph Gates',cr:'Mixed crops',u:'https://www.youtube.com/watch?v=HtZ9586B3FM',la:[0.5,37.5]},
+  {id:19,co:'SunCulture',t:"It Makes Farming Easy \u2014 Alice's Story of Solving Water Challenges",d:"Alice shares her experience with SunCulture's solar irrigation solutions and the year-round production it enabled on her small farm.",cn:'Kenya',r:'Sub-Saharan Africa',th:'Solar & Irrigation Technology',ft:'Smallholder',fn:'Alice',cr:'Mixed crops',u:'https://www.youtube.com/watch?v=E_Fsw6tumGo',la:[0.5,37.5]},
+  {id:20,co:'SunCulture',t:"How SunCulture Customers Benefit Beyond Farming \u2014 Alice's Story",d:"Alice describes the wider benefits of SunCulture's solar irrigation beyond farming, including household water access and energy savings.",cn:'Kenya',r:'Sub-Saharan Africa',th:'Solar & Irrigation Technology',ft:'Smallholder',fn:'Alice',cr:'Mixed crops',u:'https://www.youtube.com/watch?v=S_q7j39XIpo',la:[0.5,37.5]},
+  {id:21,co:'SunCulture',t:"No More Waiting for Rain: How SunCulture Changed Chrispine's Farm",d:"Chrispine shares how SunCulture's solar-powered irrigation freed him from dependence on rainfall, enabling year-round farming and increased income.",cn:'Kenya',r:'Sub-Saharan Africa',th:'Solar & Irrigation Technology',ft:'Smallholder',fn:'Chrispine',cr:'Mixed crops',u:'https://www.youtube.com/watch?v=ruA8XQHhrJA',la:[0.5,37.5]},
+  {id:22,co:'SunCulture',t:"Christine's Transformation Story: A Happy Farmer's Journey with SunCulture",d:"Christine describes her transformation from struggling with water scarcity to thriving as a farmer after adopting SunCulture's solar irrigation system.",cn:'Kenya',r:'Sub-Saharan Africa',th:'Solar & Irrigation Technology',ft:'Smallholder',fn:'Christine',cr:'Mixed crops',u:'https://www.youtube.com/watch?v=yNr8D42pOa4',la:[0.5,37.5]},
+  {id:23,co:'SunCulture',t:"The Role of a SunCulture Water Pump in Emmanuel Barasa's Post-Retirement Farming",d:"Emmanuel Barasa, a retired professional, shares how SunCulture's solar water pump transformed his post-retirement farming venture into a productive operation.",cn:'Kenya',r:'Sub-Saharan Africa',th:'Solar & Irrigation Technology',ft:'Smallholder',fn:'Emmanuel Barasa',cr:'Mixed crops',u:'https://www.youtube.com/watch?v=avqOig0hhLM',la:[0.5,37.5]},
+  /* ADD NEW ENTRIES ABOVE THIS LINE */
+];
+const ISO={'024':'Angola','032':'Argentina','036':'Australia','050':'Bangladesh','068':'Bolivia','072':'Botswana','076':'Brazil','104':'Myanmar','108':'Burundi','116':'Cambodia','120':'Cameroon','124':'Canada','144':'Sri Lanka','148':'Chad','152':'Chile','156':'China','170':'Colombia','178':'Congo','180':'Dem. Rep. Congo','188':'Costa Rica','192':'Cuba','204':'Benin','208':'Denmark','218':'Ecuador','231':'Ethiopia','232':'Eritrea','246':'Finland','250':'France','266':'Gabon','270':'Gambia','276':'Germany','288':'Ghana','300':'Greece','324':'Guinea','332':'Haiti','348':'Hungary','356':'India','360':'Indonesia','364':'Iran','368':'Iraq','372':'Ireland','380':'Italy','384':"C\u00f4te d'Ivoire",'392':'Japan','398':'Kazakhstan','400':'Jordan','404':'Kenya','410':'South Korea','418':'Laos','430':'Liberia','434':'Libya','450':'Madagascar','454':'Malawi','458':'Malaysia','466':'Mali','478':'Mauritania','484':'Mexico','504':'Morocco','508':'Mozambique','516':'Namibia','524':'Nepal','528':'Netherlands','554':'New Zealand','562':'Niger','566':'Nigeria','578':'Norway','586':'Pakistan','598':'Papua New Guinea','600':'Paraguay','604':'Peru','608':'Philippines','616':'Poland','620':'Portugal','642':'Romania','643':'Russia','646':'Rwanda','682':'Saudi Arabia','686':'Senegal','694':'Sierra Leone','706':'Somalia','710':'South Africa','716':'Zimbabwe','724':'Spain','728':'South Sudan','729':'Sudan','748':'Eswatini','752':'Sweden','756':'Switzerland','760':'Syria','764':'Thailand','768':'Togo','788':'Tunisia','792':'Turkey','800':'Uganda','804':'Ukraine','818':'Egypt','826':'United Kingdom','834':'Tanzania','840':'United States','854':'Burkina Faso','858':'Uruguay','862':'Venezuela','887':'Yemen','894':'Zambia'};
+const DBC={};D.forEach(d=>{if(!d.cn.includes('/')&&!d.cn.includes('Multiple'))DBC[d.cn]=(DBC[d.cn]||0)+1;});
+function ytId(u){return(u.match(/[?&]v=([^&]+)/)||[])[1]||'';}
+const allCo=[...new Set(D.map(d=>d.co))].sort();const allCn=[...new Set(D.map(d=>d.cn))].sort();
+
+function WorldMap({sel,onClick}){
+  const ref=useRef(null);const[geo,setGeo]=useState(null);const[ld,setLd]=useState(true);const[hov,setHov]=useState(null);const[mp,setMp]=useState([0,0]);
+  useEffect(()=>{let c=false;(async()=>{try{const r=await fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json');const t=await r.json();const g=topojson.feature(t,t.objects.countries);g.features.forEach(f=>{f.properties.name=ISO[f.id]||ISO[String(f.id)]||'';});if(!c){setGeo(g);setLd(false);}}catch(e){if(!c)setLd(false);}})();return()=>{c=true;};},[]);
+  const W=960,H=480;const proj=useMemo(()=>d3.geoNaturalEarth1().scale(155).translate([W/2,H/2+15]),[]);const path=useMemo(()=>d3.geoPath().projection(proj),[proj]);const grat=useMemo(()=>d3.geoGraticule10(),[]);
+  if(ld)return h('div',{className:'map-svg-wrap',style:{padding:'80px 20px',textAlign:'center'}},h('div',{style:{fontSize:13,color:'#8896A7'}},'Loading map...'),h('div',{className:'lbar',style:{margin:'12px auto'}},h('div',{className:'lbar-in'})));
+  if(!geo)return h('div',{className:'map-svg-wrap',style:{padding:'40px',textAlign:'center',color:'#8896A7'}},'Map could not be loaded.');
+  return h('div',{className:'map-svg-wrap'},
+    h('svg',{ref,viewBox:`0 0 ${W} ${H}`,onMouseMove:e=>{const r=ref.current?.getBoundingClientRect();if(r)setMp([e.clientX-r.left,e.clientY-r.top]);},onMouseLeave:()=>setHov(null)},
+      h('path',{d:path(grat),fill:'none',stroke:'#E2E6EB',strokeWidth:.3}),
+      h('path',{d:path({type:'Sphere'}),fill:'none',stroke:'#C8CED6',strokeWidth:.8}),
+      geo.features.map((f,i)=>{const nm=f.properties.name;const inDb=DBC[nm];const isSel=sel===nm;const isH=hov===i;const pD=path(f);if(!pD)return null;
+        return h('path',{key:i,d:pD,fill:isSel?'#0071BC':isH&&inDb?'#3A9BD5':inDb?'#4AA8D8':'#D8DEE6',fillOpacity:isSel?.85:isH&&inDb?.7:inDb?.45:1,stroke:isSel?'#002244':inDb?'#FFF':'#BCC3CC',strokeWidth:isSel?1.8:inDb?.7:.25,style:{cursor:inDb?'pointer':'default',transition:'fill .15s,fill-opacity .15s'},onMouseEnter:()=>setHov(i),onMouseLeave:()=>setHov(null),onClick:()=>{if(inDb)onClick(isSel?null:nm);}})})
+    ),
+    hov!==null&&geo.features[hov]&&(()=>{const nm=geo.features[hov].properties.name;const c=DBC[nm];
+      return h('div',{className:'map-tt',style:{left:Math.min(mp[0],(ref.current?.clientWidth||800)-180),top:mp[1]-8}},h('b',null,nm),c?h('small',null,`${c} video${c>1?'s':''} \u2014 click to view`):h('small',null,'No videos'));})()
+  );
+}
+
+function VCard({v,onClick}){return h('div',{className:'vcard',onClick},h('div',{className:'vthumb'},h('img',{src:`https://img.youtube.com/vi/${ytId(v.u)}/mqdefault.jpg`,alt:v.t,loading:'lazy'}),h('div',{className:'vplay'})),h('div',{className:'vinfo'},h('div',{className:'vco'},v.co),h('div',{className:'vtitle'},v.t),h('div',{className:'vdesc'},v.d)),h('div',{className:'vmeta'},h('span',{className:'vtag'},v.fn),h('span',{className:'vtag vtag-th'},v.th)));}
+
+function Modal({v,onClose}){if(!v)return null;return h('div',{className:'modal-bg',onClick:onClose},h('div',{className:'modal-box',onClick:e=>e.stopPropagation()},h('div',{className:'modal-vid'},h('iframe',{src:`https://www.youtube.com/embed/${ytId(v.u)}?autoplay=1`,allow:'accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture',allowFullScreen:true,title:v.t})),h('div',{className:'modal-body'},h('div',{className:'modal-co'},v.co),h('div',{className:'modal-t'},v.t),h('div',{className:'modal-d'},v.d),h('div',{className:'modal-grid'},[['Country',v.cn],['Farmer',v.fn],['Crop / Activity',v.cr],['Theme',v.th],['Farmer Type',v.ft],['Region',v.r]].map(([l,val])=>h('div',{key:l},h('label',null,l),h('span',null,val))))),h('div',{className:'modal-foot'},h('a',{className:'btn-yt',href:v.u,target:'_blank',rel:'noopener noreferrer'},'\u25b6 Open on YouTube'),h('button',{className:'btn-close',onClick:onClose},'Close'))));}
+
+function App(){
+  const[page,setPage]=useState('home');
+  const[selCn,setSelCn]=useState(null);const[selV,setSelV]=useState(null);const[search,setSearch]=useState('');
+  const cnVids=useMemo(()=>selCn?D.filter(d=>d.cn===selCn):[],[selCn]);
+  const filtered=useMemo(()=>{if(!search)return D;const s=search.toLowerCase();return D.filter(d=>(d.co+d.t+d.cn+d.fn+d.cr+d.th+d.d).toLowerCase().includes(s));},[search]);
+  const allCo2=[...new Set(D.map(d=>d.co))].sort();const allCn2=[...new Set(D.map(d=>d.cn))].sort();
+  const heroThumbs=D.slice(0,12).map(v=>ytId(v.u));
+  const nav=(p)=>{setPage(p);window.scrollTo(0,0);if(p!=='map')setSelCn(null);};
+
+  /* ── NAV ── */
+  const NavBar=()=>h('div',{className:'topnav'},h('div',{className:'topnav-inner'},
+    h('div',{className:'topnav-label',style:{cursor:'pointer'},onClick:()=>nav('home')},'Farmer Testimonials Database'),
+    h('div',{className:'topnav-links'},
+      h('a',{href:'#',className:page==='home'?'nav-active':'',onClick:e=>{e.preventDefault();nav('home');}},'Home'),
+      h('a',{href:'#',className:page==='about'?'nav-active':'',onClick:e=>{e.preventDefault();nav('about');}},'About'),
+      h('a',{href:'#',className:page==='map'?'nav-active':'',onClick:e=>{e.preventDefault();nav('map');}},'Map'),
+      h('a',{href:'#',className:page==='database'?'nav-active':'',onClick:e=>{e.preventDefault();nav('database');}},'Database')
+    )
+  ));
+
+  /* ── HOME PAGE ── */
+  if(page==='home') return h('div',null,NavBar(),
+    h('div',{className:'hero'},h('div',{className:'hero-mosaic'},heroThumbs.map((id,i)=>h('img',{key:i,src:`https://img.youtube.com/vi/${id}/mqdefault.jpg`,alt:''}))),h('div',{className:'hero-gradient'}),h('div',{className:'hero-content'},h('div',{className:'hero-eyebrow'},'Research Database'),h('h1',{className:'hero-title'},'Documenting the Voices of Farmers Adopting Agricultural Technology'),h('p',{className:'hero-sub'},'A curated, continuously updated repository of video testimonials from smallholder farmers across the developing world, capturing first-hand evidence of agtech adoption and its impact on livelihoods.'),h('a',{className:'hero-cta',href:'#',onClick:e=>{e.preventDefault();nav('map');}},'Explore the Map \u2193')),h('div',{className:'hero-rule'})),
+    h('div',{className:'stats'},h('div',{className:'stats-inner'},[{v:D.length,l:'Video Testimonials'},{v:allCo2.length,l:'AgTech Companies'},{v:allCn2.length,l:'Countries'},{v:7,l:'Technology Themes'}].map((s,i)=>h('div',{key:i,className:'stat'},h('div',{className:'stat-val'},s.v),h('div',{className:'stat-lbl'},s.l))))),
+    h('div',{className:'about',id:'about-sec'},h('div',{className:'about-grid'},h('div',null,h('div',{className:'about-eyebrow'},'About This Project'),h('h2',null,'Documenting the Evidence of AgTech Adoption'),h('p',null,'Agricultural technology is transforming farming across the developing world \u2014 from AI-powered advisory services and mobile credit platforms to solar irrigation and drone-based crop monitoring. Yet documented, first-person evidence of how these technologies are experienced by the farmers themselves remains fragmented and difficult to access.'),h('p',null,'This database systematically collects and organizes verified farmer testimonial videos into a searchable, continuously updated repository organized by country, company, and thematic area.'),h('a',{className:'view-link',href:'#',onClick:e=>{e.preventDefault();nav('about');}},'Read Full About \u2192')),h('div',{className:'about-img'},h('div',{className:'about-img-grid'},[0,2,8,15].map(i=>h('img',{key:i,src:`https://img.youtube.com/vi/${ytId(D[i].u)}/mqdefault.jpg`,alt:D[i].t})))))),
+    h('div',{className:'section-wrap',style:{paddingTop:32,paddingBottom:16}},h('div',{className:'sec-head'},h('h2',null,'Geographic Coverage'),h('a',{className:'view-link',href:'#',onClick:e=>{e.preventDefault();nav('map');}},'Open Full Map \u2192')),h('div',{className:'map-wrap'},h(WorldMap,{sel:selCn,onClick:c=>{setSelCn(c);if(c)nav('map');setSelCn(c);}}),h('div',{className:'map-legend'},h('span',null,h('i',{style:{background:'#4AA8D8',opacity:.45}}),'Videos available'),h('span',null,h('i',{style:{background:'#0071BC',opacity:.85}}),'Selected'),h('span',null,h('i',{style:{background:'#D8DEE6'}}),'No data')))),
+    h('div',{className:'section-wrap',style:{paddingTop:16,paddingBottom:16}},h('div',{className:'sec-head'},h('h2',null,'Featured Testimonials'),h('a',{className:'view-link',href:'#',onClick:e=>{e.preventDefault();nav('database');}},'View All \u2192')),h('div',{className:'vgrid',style:{padding:0}},D.slice(0,6).map(v=>h(VCard,{key:v.id,v,onClick:()=>setSelV(v)})))),
+    h('footer',{className:'site-footer'},h('div',null,h('div',{className:'footer-t'},'Farmer Testimonials Database'),h('div',{className:'footer-p'},'A research tool documenting agricultural technology adoption',h('br'),'through verified farmer video testimonials across developing regions.')),h('div',{className:'footer-r'},h('div',null,`${D.length} videos \u00b7 ${allCn2.length} countries \u00b7 ${allCo2.length} companies`),h('div',{style:{marginTop:2}},'Updated April 2026'))),
+    h(Modal,{v:selV,onClose:()=>setSelV(null)})
+  );
+
+  /* ── ABOUT PAGE ── */
+  if(page==='about') return h('div',null,NavBar(),
+    h('div',{className:'page-head'},h('a',{className:'back-btn',href:'#',onClick:e=>{e.preventDefault();nav('home');}},'← Home'),h('h1',{className:'page-title'},'About This Project')),
+    h('div',{className:'full-about'},
+      h('h2',null,'Why a Farmer Testimonials Database?'),
+      h('p',null,'Agricultural technology is transforming smallholder farming across Sub-Saharan Africa, South Asia, and Latin America. From solar-powered irrigation and AI-driven crop advisory to mobile-based market access and digital credit, a new generation of agtech companies is reaching hundreds of millions of farmers. Yet documented, first-person evidence of how these technologies are experienced by the farmers themselves remains fragmented and difficult to access.'),
+      h('p',null,'Company websites feature scattered case studies. YouTube channels contain testimonial videos buried among product demos and corporate content. Media outlets produce occasional features. But no single resource systematically catalogs these farmer voices in a way that is searchable, verifiable, and useful for research.'),
+      h('div',{className:'about-highlight',style:{maxWidth:800,margin:'24px 0'}},'This database addresses that gap by assembling verified video testimonials \u2014 in farmers\' own words and languages \u2014 into a searchable, continuously updated repository organized by country, company, and thematic area.'),
+      h('h2',null,'Who Is This For?'),
+      h('p',null,'The Farmer Testimonials Database is designed as a research and evidence tool for development practitioners, policymakers, investors, and academics working at the intersection of agriculture, technology, and rural development. Each entry links to a verified video source, enabling users to hear directly from the farmers who are adopting these technologies \u2014 their motivations, their challenges, and the measurable changes in their productivity, incomes, and resilience.'),
+      h('h2',null,'How the Database Is Structured'),
+      h('p',null,'Each entry in the database includes the company name, a direct link to a verified YouTube video, the country and region, the farmer\'s name (where available), the crop or agricultural activity, and a thematic classification. Videos are organized into seven thematic areas: AI & Precision Agriculture, Dairy & Livestock Technology, Digital Advisory & Extension, Farm Inputs & Credit, Insurance & Risk Management, Market Access & Information, Mechanization & Equipment, and Solar & Irrigation Technology.'),
+      h('h2',null,'A Living Resource'),
+      h('p',null,'The database is continuously expanding. As new testimonials are identified and verified across additional countries and agtech sub-sectors, they are added to the repository. The goal is to build the most comprehensive open collection of farmer-perspective evidence on agricultural technology adoption in the developing world.'),
+      h('p',null,'Contributions, corrections, and suggestions for new entries are welcome. The database is maintained as an open resource and can be updated directly through its public repository.'),
+      h('div',{style:{marginTop:32}},h('a',{className:'hero-cta',href:'#',onClick:e=>{e.preventDefault();nav('map');}},'Explore the Map \u2192'))
+    ),
+    h('footer',{className:'site-footer'},h('div',null,h('div',{className:'footer-t'},'Farmer Testimonials Database'),h('div',{className:'footer-p'},'A research tool documenting agricultural technology adoption.')),h('div',{className:'footer-r'},'Updated April 2026'))
+  );
+
+  /* ── MAP PAGE ── */
+  if(page==='map') return h('div',null,NavBar(),
+    h('div',{className:'page-head'},h('a',{className:'back-btn',href:'#',onClick:e=>{e.preventDefault();nav('home');}},'← Home'),h('h1',{className:'page-title'},'Interactive Map')),
+    h('div',{className:'section-wrap',style:{paddingTop:20,paddingBottom:40}},
+      h('p',{style:{fontSize:14,color:'var(--text-sec)',marginBottom:16,lineHeight:1.6}},'Click any highlighted country to view available farmer testimonial videos from that region. Countries shown in blue have verified video testimonials in the database.'),
+      h('div',{className:'map-wrap'},h(WorldMap,{sel:selCn,onClick:setSelCn}),h('div',{className:'map-legend'},h('span',null,h('i',{style:{background:'#4AA8D8',opacity:.45}}),'Videos available'),h('span',null,h('i',{style:{background:'#0071BC',opacity:.85}}),'Selected'),h('span',null,h('i',{style:{background:'#D8DEE6'}}),'No data'))),
+      selCn&&h('div',{className:'cpanel',key:selCn},h('div',{className:'cpanel-head'},h('div',null,h('h3',null,selCn),h('small',null,`${cnVids.length} testimonial${cnVids.length!==1?'s':''}`)),h('button',{className:'cpanel-close',onClick:()=>setSelCn(null)},'\u2715 Close')),h('div',{className:'vgrid'},cnVids.map(v=>h(VCard,{key:v.id,v,onClick:()=>setSelV(v)}))))
+    ),
+    h('footer',{className:'site-footer'},h('div',null,h('div',{className:'footer-t'},'Farmer Testimonials Database')),h('div',{className:'footer-r'},'Updated April 2026')),
+    h(Modal,{v:selV,onClose:()=>setSelV(null)})
+  );
+
+  /* ── DATABASE PAGE ── */
+  if(page==='database') return h('div',null,NavBar(),
+    h('div',{className:'page-head'},h('a',{className:'back-btn',href:'#',onClick:e=>{e.preventDefault();nav('home');}},'← Home'),h('h1',{className:'page-title'},'Video Database')),
+    h('div',{className:'section-wrap',style:{paddingTop:20,paddingBottom:40}},
+      h('p',{style:{fontSize:14,color:'var(--text-sec)',marginBottom:16,lineHeight:1.6}},`Browse all ${D.length} verified farmer testimonial videos. Click any row to watch the video and see full details.`),
+      h('div',{className:'vgrid',style:{padding:0,marginBottom:24}},D.map(v=>h(VCard,{key:v.id,v,onClick:()=>setSelV(v)}))),
+      h('div',{className:'tbl-wrap'},h('div',{className:'tbl-bar'},h('h3',null,'Data Table'),h('input',{className:'search-box',type:'text',placeholder:'Search videos...',value:search,onChange:e=>setSearch(e.target.value)})),h('div',{style:{overflowX:'auto'}},h('table',{className:'dtbl'},h('thead',null,h('tr',null,['Company','Title','Country','Theme','Farmer'].map(c=>h('th',{key:c},c)))),h('tbody',null,filtered.map(v=>h('tr',{key:v.id,onClick:()=>setSelV(v)},h('td',{style:{fontWeight:500}},v.co),h('td',null,h('span',{className:'td-t'},v.t)),h('td',null,v.cn),h('td',{style:{fontSize:12,color:'#5A6577'}},v.th),h('td',{style:{color:'#5A6577'}},v.fn)))))))
+    ),
+    h('footer',{className:'site-footer'},h('div',null,h('div',{className:'footer-t'},'Farmer Testimonials Database')),h('div',{className:'footer-r'},`${D.length} videos \u00b7 ${allCn2.length} countries \u00b7 ${allCo2.length} companies`)),
+    h(Modal,{v:selV,onClose:()=>setSelV(null)})
+  );
+}
+ReactDOM.createRoot(document.getElementById('root')).render(h(App));
+  </script>
+</body>
+</html>
